@@ -1,5 +1,5 @@
-<img width="1257" height="807" alt="Ekran görüntüsü 2026-08-29 141219" src="https://github.com/user-attachments/assets/db1f5d6b-6708-41b2-83bf-6321ab198208" />
 <img width="1253" height="807" alt="Ekran görüntüsü 2026-08-29 141042" src="https://github.com/user-attachments/assets/2d3e50a1-2943-4453-b370-419bba399cc3" />
+<img width="1257" height="807" alt="Ekran görüntüsü 2026-08-29 141219" src="https://github.com/user-attachments/assets/db1f5d6b-6708-41b2-83bf-6321ab198208" />
 # Fadimrak Steam Tool
 
 Fadimrak Steam Tool is a comprehensive library, achievement, DLC, and account management utility developed for the Steam client. Built with a Python-based asynchronous backend architecture and a PyWebView-powered modern responsive user interface, it provides users with a fast, lightweight, and modular experience.
