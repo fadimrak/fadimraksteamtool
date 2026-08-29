@@ -15,13 +15,13 @@
 <div id="splash">
   <img src="logo.png" alt="logo">
   <div id="splash-bar"><div id="splash-fill"></div></div>
-  <div id="splash-status">fadimrak tarafından yapılmıştır. İyi kullanımlar!</div>
+  <div id="splash-status" data-i18n="splash.credits">fadimrak tarafından yapılmıştır. İyi kullanımlar!</div>
 </div>
 
 <!-- ── Update Banner ───────────────────────────────────────────── -->
 <div id="update-banner" class="hidden">
-  <span>Yeni bir sürüm mevcut!</span>
-  <button class="btn-banner" onclick="openGithub()">İndir</button>
+  <span data-i18n="update.banner">Yeni bir sürüm mevcut!</span>
+  <button class="btn-banner" onclick="openGithub()" data-i18n="update.download">İndir</button>
   <button class="btn-close-banner" onclick="document.getElementById('update-banner').classList.add('hidden')">✕</button>
 </div>
 
@@ -34,57 +34,61 @@
       <img src="logo.png" alt="logo">
     </div>
 
+    <!-- Quick Language Switcher in Sidebar -->
+    <div class="sidebar-lang-toggle">
+      <button class="lang-pill active" data-lang="tr" onclick="setLanguage('tr')">🇹🇷 TR</button>
+      <button class="lang-pill" data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
+    </div>
+
     <nav class="sidebar-nav">
       <button class="nav-item active" data-page="library" onclick="navigateTo('library')">
         <img class="nav-icon" src="kutuphane.png" alt="">
-        <span>Kütüphane</span>
+        <span data-i18n="nav.library">Kütüphane</span>
       </button>
       <button class="nav-item" data-page="add" onclick="navigateTo('add')">
         <img class="nav-icon" src="oyunekle.png" alt="">
-        <span>Oyun Ekle</span>
+        <span data-i18n="nav.add_game">Oyun Ekle</span>
       </button>
       <button class="nav-item" data-page="onlinefix" onclick="navigateTo('onlinefix')">
         <img class="nav-icon" src="onlinefix.png" alt="">
-        <span>Online Fix</span>
+        <span data-i18n="nav.onlinefix">Online Fix</span>
       </button>
       <button class="nav-item" data-page="sam" onclick="navigateTo('sam')">
         <img class="nav-icon" src="basarimlar.png" alt="">
-        <span>Başarımlar</span>
+        <span data-i18n="nav.sam">Başarımlar</span>
       </button>
       <button class="nav-item" data-page="idle" onclick="navigateTo('idle')">
         <img class="nav-icon" src="cards.png" alt="">
-        <span>Kart & Saat Kasma</span>
+        <span data-i18n="nav.idle">Kart & Saat Kasma</span>
       </button>
       <button class="nav-item" data-page="dlc" onclick="navigateTo('dlc')">
         <img class="nav-icon" src="dlc.png" alt="">
-        <span>DLC Unlocker</span>
+        <span data-i18n="nav.dlc">DLC Unlocker</span>
       </button>
       <button class="nav-item" data-page="account" onclick="navigateTo('account')">
         <img class="nav-icon" src="account.png" alt="">
-        <span>Steam Hesabı</span>
+        <span data-i18n="nav.account">Steam Hesabı</span>
       </button>
       <button class="nav-item" data-page="settings" onclick="navigateTo('settings')">
         <img class="nav-icon" src="ayarlar.png" alt="">
-        <span>Ayarlar</span>
+        <span data-i18n="nav.settings">Ayarlar</span>
       </button>
     </nav>
 
-    <!-- Compact Tray Button buradan kaldırıldı, Ayarlar sayfasına taşındı -->
-
     <div class="sidebar-actions">
-      <button class="btn-sidebar-action" onclick="restartSteam()" title="Steam'i Yeniden Başlat">
+      <button class="btn-sidebar-action" onclick="restartSteam()" data-i18n-title="nav.restart_steam" title="Steam'i Yeniden Başlat">
         <span class="sa-icon">↺</span>
-        <span class="sa-label">Steam'i Yeniden Başlat</span>
+        <span class="sa-label" data-i18n="nav.restart_steam">Steam'i Yeniden Başlat</span>
       </button>
-      <button class="btn-sidebar-action" id="tray-sidebar-btn" style="display:none;" onclick="minimizeToTray()" title="Sistem Tepsisine Küçült">
+      <button class="btn-sidebar-action" id="tray-sidebar-btn" style="display:none;" onclick="minimizeToTray()" data-i18n-title="nav.minimize_tray" title="Sistem Tepsisine Küçült">
         <span class="sa-icon">▼</span>
-        <span class="sa-label">Tray'e Küçült</span>
+        <span class="sa-label" data-i18n="nav.minimize_tray">Tray'e Küçült</span>
       </button>
     </div>
 
     <div class="dll-status-wrap" onclick="checkDllStatus()">
       <div class="dll-status-dot" id="dll-dot"></div>
-      <span class="dll-status-text" id="dll-text">DLL Kontrol…</span>
+      <span class="dll-status-text" id="dll-text" data-i18n="nav.dll_checking">DLL Kontrol…</span>
     </div>
 
     <div class="sidebar-bottom">
@@ -100,31 +104,31 @@
     <section id="page-library" class="page active">
       <div class="page-header">
         <div>
-          <span class="page-title">Kütüphane</span>
+          <span class="page-title" data-i18n="library.title">Kütüphane</span>
           <span style="font-size:12px;color:var(--muted);margin-left:8px;" id="lib-count">…</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
-          <button class="btn btn-ghost btn-sm" onclick="restartSteam()">↺ Steam'i Yeniden Başlat</button>
+          <button class="btn btn-ghost btn-sm" onclick="restartSteam()" data-i18n="library.restart_btn">↺ Steam'i Yeniden Başlat</button>
           <div class="search-box">
             <span class="search-icon"></span>
-            <input type="search" class="input" placeholder="Kütüphanede ara…" oninput="filterLibrary(this.value)">
+            <input type="search" class="input" placeholder="Kütüphanede ara…" data-i18n-placeholder="library.search_placeholder" oninput="filterLibrary(this.value)">
           </div>
         </div>
       </div>
 
       <!-- Kütüphane İpucu Kartı -->
       <div class="info-callout">
-        <h3>Kütüphane Kullanım Rehberi</h3>
-        <p>
+        <h3 data-i18n="library.guide_title">Kütüphane Kullanım Rehberi</h3>
+        <p data-i18n="library.guide_desc">
           Eklediğiniz oyunlar Steam istemcinize otomatik olarak bağlanır. Oyun kartlarına tıklayarak başarımlarını yönetebilir, sağ tıklayarak SteamDB sayfasına gidebilir veya App ID kopyalayabilirsiniz.
         </p>
       </div>
 
       <div id="lib-empty" class="empty-state hidden">
         <div class="empty-icon"></div>
-        <div style="font-size:14px;font-weight:700;margin-bottom:6px;">Henüz oyun eklenmedi</div>
-        <div style="font-size:12px;margin-bottom:16px;">Oyun Ekle sekmesinden mağazayı arayarak veya dosya yükleyerek ekleyebilirsiniz.</div>
-        <button class="btn btn-primary btn-sm" onclick="navigateTo('add')">Oyun Ekle →</button>
+        <div style="font-size:14px;font-weight:700;margin-bottom:6px;" data-i18n="library.empty_title">Henüz oyun eklenmedi</div>
+        <div style="font-size:12px;margin-bottom:16px;" data-i18n="library.empty_desc">Oyun Ekle sekmesinden mağazayı arayarak veya dosya yükleyerek ekleyebilirsiniz.</div>
+        <button class="btn btn-primary btn-sm" onclick="navigateTo('add')" data-i18n="library.add_btn">Oyun Ekle →</button>
       </div>
 
       <div id="lib-grid" class="game-grid"></div>
@@ -133,23 +137,23 @@
     <!-- ── Page: Add Game ──────────────────────────────────────── -->
     <section id="page-add" class="page">
       <div class="page-header">
-        <span class="page-title">Oyun Ekle</span>
-        <button class="btn btn-ghost btn-sm" onclick="restartSteam()">↺ Steam'i Yeniden Başlat</button>
+        <span class="page-title" data-i18n="add.title">Oyun Ekle</span>
+        <button class="btn btn-ghost btn-sm" onclick="restartSteam()" data-i18n="library.restart_btn">↺ Steam'i Yeniden Başlat</button>
       </div>
 
       <div class="info-callout">
-        <h3>Oyun Ekleme Rehberi</h3>
+        <h3 data-i18n="add.guide_title">Oyun Ekleme Rehberi</h3>
         <p>
-          <b>Mağazada Ara:</b> Steam mağazasındaki tüm oyunları arayabilir ve tek tıkla Lua / Manifest dosyalarını indirebilirsiniz.<br>
-          <b>Dosya Yükle:</b> İndirdiğiniz .lua, .manifest veya .zip dosyalarını doğrudan Steam klasörünüze aktarabilirsiniz.<br>
-          <b>App ID ile Ekle:</b> SteamDB'den bulduğunuz App ID ile anında indirme başlatabilirsiniz.
+          <b><span data-i18n="add.tab_search">Mağazada Ara</span>:</b> <span data-i18n="add.guide_desc_search">Steam mağazasındaki tüm oyunları arayabilir ve tek tıkla Lua / Manifest dosyalarını indirebilirsiniz.</span><br>
+          <b><span data-i18n="add.tab_files">Dosya Yükle</span>:</b> <span data-i18n="add.guide_desc_files">İndirdiğiniz .lua, .manifest veya .zip dosyalarını doğrudan Steam klasörünüze aktarabilirsiniz.</span><br>
+          <b><span data-i18n="add.tab_appid">App ID ile Ekle</span>:</b> <span data-i18n="add.guide_desc_appid">SteamDB'den bulduğunuz App ID ile anında indirme başlatabilirsiniz.</span>
         </p>
       </div>
 
       <div class="tabs-nav">
-        <button class="tab-btn active" onclick="switchTab('search', this)">Mağazada Ara</button>
-        <button class="tab-btn" onclick="switchTab('files', this)">Dosya Yükle</button>
-        <button class="tab-btn" onclick="switchTab('appid', this)">App ID ile Ekle</button>
+        <button class="tab-btn active" onclick="switchTab('search', this)" data-i18n="add.tab_search">Mağazada Ara</button>
+        <button class="tab-btn" onclick="switchTab('files', this)" data-i18n="add.tab_files">Dosya Yükle</button>
+        <button class="tab-btn" onclick="switchTab('appid', this)" data-i18n="add.tab_appid">App ID ile Ekle</button>
       </div>
 
       <!-- Tab: Search -->
@@ -157,9 +161,9 @@
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;">
           <div class="search-box" style="flex:1;max-width:360px;">
             <span class="search-icon"></span>
-            <input type="search" class="input" style="width:100%;" placeholder="Oyun adı veya App ID…" oninput="onSearchInput(this.value)">
+            <input type="search" class="input" style="width:100%;" placeholder="Oyun adı veya App ID…" data-i18n-placeholder="add.search_placeholder" oninput="onSearchInput(this.value)">
           </div>
-          <span style="font-size:12px;color:var(--muted);" id="search-count">Popüler Oyunlar</span>
+          <span style="font-size:12px;color:var(--muted);" id="search-count" data-i18n="add.popular_games">Popüler Oyunlar</span>
         </div>
 
         <div id="search-loader" class="empty-state hidden" style="padding:30px 0;">
@@ -173,13 +177,13 @@
       <div id="tab-files" class="tab-pane">
         <div id="drop-zone" class="drop-zone" onclick="browseFiles()">
           <div class="dz-icon"></div>
-          <div style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text);">Dosyaları Buraya Sürükleyin</div>
-          <p>.manifest, .lua veya .zip dosyalarını sürükleyin ya da tıklayarak seçin.</p>
-          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();browseFiles()">Dosya Seç</button>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text);" data-i18n="add.drop_title">Dosyaları Buraya Sürükleyin</div>
+          <p data-i18n="add.drop_desc">.manifest, .lua veya .zip dosyalarını sürükleyin ya da tıklayarak seçin.</p>
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();browseFiles()" data-i18n="add.btn_choose_files">Dosya Seç</button>
         </div>
 
         <div style="margin-top:20px;">
-          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;">Dosya ve Manifest İndirebileceğiniz Güvenilir Kaynaklar:</div>
+          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;" data-i18n="add.sources_title">Dosya ve Manifest İndirebileceğiniz Güvenilir Kaynaklar:</div>
           <div class="file-sources-grid">
             <a class="file-source-link" href="#" onclick="pywebview.api.open_in_browser('https://steamtools.pages.dev/');return false;">
               <span class="file-source-icon"></span>
@@ -212,13 +216,13 @@
       <!-- Tab: App ID -->
       <div id="tab-appid" class="tab-pane">
         <div class="settings-block" style="max-width:480px;">
-          <h3>Doğrudan App ID Girişi</h3>
-          <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6;">
+          <h3 data-i18n="add.appid_title">Doğrudan App ID Girişi</h3>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6;" data-i18n="add.appid_desc">
             SteamDB veya Steam mağazasındaki oyunun App ID'sini girerek doğrudan indirme başlatabilirsiniz.
           </p>
           <div style="display:flex;gap:8px;">
-            <input type="text" class="input" id="manual-appid" placeholder="Örn: 730" style="flex:1;">
-            <button class="btn btn-primary btn-sm" onclick="addGameById(document.getElementById('manual-appid').value)">İndir & Kur</button>
+            <input type="text" class="input" id="manual-appid" placeholder="Örn: 730" data-i18n-placeholder="add.appid_placeholder" style="flex:1;">
+            <button class="btn btn-primary btn-sm" onclick="addGameById(document.getElementById('manual-appid').value)" data-i18n="add.btn_download_install">İndir & Kur</button>
           </div>
         </div>
       </div>
@@ -227,35 +231,35 @@
     <!-- ── Page: Online Fix ────────────────────────────────────── -->
     <section id="page-onlinefix" class="page">
       <div class="page-header">
-        <span class="page-title">Online Fix Yükleyici</span>
-        <a class="btn btn-ghost btn-sm" href="#" onclick="pywebview.api.open_in_browser('https://online-fix.me');return false;">online-fix.me Sitesi ↗</a>
+        <span class="page-title" data-i18n="onlinefix.title">Online Fix Yükleyici</span>
+        <a class="btn btn-ghost btn-sm" href="#" onclick="pywebview.api.open_in_browser('https://online-fix.me');return false;" data-i18n="onlinefix.site_link">online-fix.me Sitesi ↗</a>
       </div>
 
       <!-- Online Fix Detaylı Açıklama Kartı -->
       <div class="info-callout">
-        <h3>Online Fix Nedir ve Nasıl Çalışır?</h3>
-        <p>
-          Online-Fix, korsan ve crackli oyunları arkadaşlarınızla resmi veya özel sunucularda çok oyunculu (multiplayer) oynamanızı sağlayan fix paketleridir.
+        <h3 data-i18n="onlinefix.guide_title">Online Fix Nedir ve Nasıl Çalışır?</h3>
+        <p data-i18n="onlinefix.guide_desc">
+          Online-Fix, oyunları arkadaşlarınızla resmi veya özel sunucularda çok oyunculu (multiplayer) oynamanızı sağlayan fix paketleridir.
         </p>
         <ul>
-          <li><b>1. Adım:</b> <a href="#" onclick="pywebview.api.open_in_browser('https://online-fix.me');return false;" style="color:var(--text);font-weight:700;">online-fix.me</a> sitesinden indirdiğiniz fix arşivini (.rar, .zip, .7z) seçin.</li>
-          <li><b>2. Adım:</b> Oyunun ana kurulu olduğu klasörü (oyun .exe dosyasının bulunduğu dizin) seçin.</li>
-          <li><b>3. Adım:</b> "Fix'i Kur" butonuna basın. Arşiv otomatik olarak <code>online-fix.me</code> şifresiyle oyun klasörünüze çıkartılacaktır.</li>
-          <li><b>Önemli:</b> Kurulum bittikten sonra Steam istemciniz açık olmalı ve oyunu doğrudan ana dizindeki exe dosyasından başlatmalısınız.</li>
+          <li><b>1. Adım:</b> <span data-i18n="onlinefix.step1_desc">online-fix.me sitesinden indirdiğiniz fix arşivini (.rar, .zip, .7z) seçin.</span></li>
+          <li><b>2. Adım:</b> <span data-i18n="onlinefix.step2_desc">Oyunun ana kurulu olduğu klasörü (oyun .exe dosyasının bulunduğu dizin) seçin.</span></li>
+          <li><b>3. Adım:</b> <span data-i18n="onlinefix.step3_desc">"Fix'i Kur" butonuna basın. Arşiv otomatik olarak online-fix.me şifresiyle oyun klasörünüze çıkartılacaktır.</span></li>
+          <li><b>Önemli:</b> <span data-i18n="onlinefix.step_important">Kurulum bittikten sonra Steam istemciniz açık olmalı ve oyunu doğrudan ana dizindeki exe dosyasından başlatmalısınız.</span></li>
         </ul>
       </div>
 
       <div id="of-extractor-warn" class="settings-block hidden" style="border-left:3px solid var(--warn);">
-        <div style="color:var(--warn);font-weight:700;margin-bottom:4px;">WinRAR veya 7-Zip Gerekli</div>
-        <div style="font-size:11px;color:var(--muted);">.rar arşivlerini otomatik açabilmek için sisteminizde WinRAR veya 7-Zip kurulu olmalıdır.</div>
+        <div style="color:var(--warn);font-weight:700;margin-bottom:4px;" data-i18n="onlinefix.warn_extractor_title">WinRAR veya 7-Zip Gerekli</div>
+        <div style="font-size:11px;color:var(--muted);" data-i18n="onlinefix.warn_extractor_desc">.rar arşivlerini otomatik açabilmek için sisteminizde WinRAR veya 7-Zip kurulu olmalıdır.</div>
       </div>
 
       <div class="of-step-card">
         <div class="of-step-header">
           <div class="of-step-num" id="of-num1">1</div>
-          <div class="of-step-title">Online-Fix Arşivini Seç (.rar / .zip / .7z)</div>
+          <div class="of-step-title" data-i18n="onlinefix.step1_title">Online-Fix Arşivini Seç (.rar / .zip / .7z)</div>
         </div>
-        <button class="btn btn-ghost btn-sm" onclick="ofSelectArchive()">Arşiv Seç…</button>
+        <button class="btn btn-ghost btn-sm" onclick="ofSelectArchive()" data-i18n="onlinefix.btn_select_archive">Arşiv Seç…</button>
         <div id="of-archive-info" class="of-selected-info hidden">
           <b id="of-archive-name">—</b> <span id="of-archive-ext" style="color:var(--muted);margin-left:6px;"></span>
         </div>
@@ -264,20 +268,20 @@
       <div class="of-step-card">
         <div class="of-step-header">
           <div class="of-step-num" id="of-num2">2</div>
-          <div class="of-step-title">Hedef Oyun Klasörünü Seç (Exe'nin olduğu klasör)</div>
+          <div class="of-step-title" data-i18n="onlinefix.step2_title">Hedef Oyun Klasörünü Seç (Exe'nin olduğu klasör)</div>
         </div>
-        <button class="btn btn-ghost btn-sm" onclick="ofSelectGameDir()">Klasör Seç…</button>
+        <button class="btn btn-ghost btn-sm" onclick="ofSelectGameDir()" data-i18n="onlinefix.btn_select_folder">Klasör Seç…</button>
         <div id="of-gamedir-info" class="of-selected-info hidden">
           <span id="of-gamedir-path">—</span>
         </div>
       </div>
 
       <div style="margin-top:14px;">
-        <button class="btn btn-primary" id="of-install-btn" disabled onclick="ofInstall()">Fix'i Kur</button>
+        <button class="btn btn-primary" id="of-install-btn" disabled onclick="ofInstall()" data-i18n="onlinefix.btn_install">Fix'i Kur</button>
       </div>
 
       <div id="of-progress-section" class="settings-block hidden" style="margin-top:16px;">
-        <div id="of-progress-label" style="font-size:12px;margin-bottom:8px;color:var(--muted);">Kuruluyor…</div>
+        <div id="of-progress-label" style="font-size:12px;margin-bottom:8px;color:var(--muted);" data-i18n="onlinefix.label_starting">Kuruluyor…</div>
         <div style="width:100%;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;">
           <div id="of-progress-bar" style="width:0%;height:100%;background:var(--success);transition:width .2s;"></div>
         </div>
@@ -293,29 +297,29 @@
         <!-- Login duvarı: hesap bağlı değilse görünür -->
         <div id="sam-login-wall" class="empty-state hidden" style="margin-top:60px;">
           <div class="empty-icon"></div>
-          <div style="font-size:15px;font-weight:700;margin-bottom:8px;">Steam Hesabı Gerekli</div>
-          <div style="font-size:12px;max-width:360px;margin:0 auto 20px;line-height:1.6;color:var(--muted);">
+          <div style="font-size:15px;font-weight:700;margin-bottom:8px;" data-i18n="sam.login_required_title">Steam Hesabı Gerekli</div>
+          <div style="font-size:12px;max-width:360px;margin:0 auto 20px;line-height:1.6;color:var(--muted);" data-i18n="sam.login_required_desc">
             Başarım yöneticisini kullanmak için Hesap sekmesinden Steam hesabınızı bağlamanız gerekiyor.
           </div>
-          <button class="btn btn-primary btn-sm" onclick="navigateTo('account')">Hesaba Git →</button>
+          <button class="btn btn-primary btn-sm" onclick="navigateTo('account')" data-i18n="sam.btn_go_to_account">Hesaba Git →</button>
         </div>
 
         <!-- Oyun listesi içeriği: hesap bağlıyken görünür -->
         <div id="sam-content-wrap" class="hidden">
           <div class="page-header">
             <div>
-              <span class="page-title">Başarım Yöneticisi (SAM)</span>
+              <span class="page-title" data-i18n="sam.title">Başarım Yöneticisi (SAM)</span>
               <span style="font-size:12px;color:var(--muted);margin-left:8px;" id="sam-game-count">…</span>
             </div>
             <div class="search-box">
               <span class="search-icon"></span>
-              <input type="search" class="input" id="sam-game-search" placeholder="Oyun ara…" oninput="samFilterGames(this.value)">
+              <input type="search" class="input" id="sam-game-search" placeholder="Oyun ara…" data-i18n-placeholder="sam.search_placeholder" oninput="samFilterGames(this.value)">
             </div>
           </div>
 
           <div class="info-callout">
-            <h3>Steam Achievement Manager</h3>
-            <p>
+            <h3 data-i18n="sam.guide_title">Steam Achievement Manager</h3>
+            <p data-i18n="sam.guide_desc">
               Bu listede yalnızca <b>başarımı olan oyunlar</b> listelenir. İstediğiniz oyunun kartına tıklayarak başarımlarını görüntüleyebilir, tek tek veya "Tümünü Aç" butonuyla hesabınıza işleyebilirsiniz.
             </p>
           </div>
@@ -329,12 +333,12 @@
       <div id="sam-ach-view" class="hidden">
         <div class="page-header">
           <div style="display:flex;align-items:center;gap:12px;">
-            <button class="btn btn-ghost btn-sm" onclick="samBackToGames()">← Oyun Seçimi</button>
-            <span class="page-title" id="sam-selected-game-title">Oyun Başarımları</span>
+            <button class="btn btn-ghost btn-sm" onclick="samBackToGames()" data-i18n="sam.btn_back">← Oyun Seçimi</button>
+            <span class="page-title" id="sam-selected-game-title" data-i18n="sam.game_achievements_title">Oyun Başarımları</span>
           </div>
           <div class="sam-header-actions">
-            <button class="btn btn-ghost btn-sm" id="sam-unlock-all-btn" onclick="samUnlockAll()">Tümünü Aç</button>
-            <button class="btn btn-danger btn-sm" id="sam-lock-all-btn" onclick="samLockAll()">Tümünü Kilitle</button>
+            <button class="btn btn-ghost btn-sm" id="sam-unlock-all-btn" onclick="samUnlockAll()" data-i18n="sam.btn_unlock_all">Tümünü Aç</button>
+            <button class="btn btn-danger btn-sm" id="sam-lock-all-btn" onclick="samLockAll()" data-i18n="sam.btn_lock_all">Tümünü Kilitle</button>
           </div>
         </div>
 
@@ -351,21 +355,21 @@
             </div>
             <div>
               <div class="sam-stat-val" id="sam-stat-unlocked">0</div>
-              <div class="sam-stat-lbl">Açılan Başarım</div>
+              <div class="sam-stat-lbl" data-i18n="sam.stat_unlocked">Açılan Başarım</div>
             </div>
           </div>
 
           <div class="sam-stat-box">
             <div>
               <div class="sam-stat-val" id="sam-stat-total">0</div>
-              <div class="sam-stat-lbl">Toplam Başarım</div>
+              <div class="sam-stat-lbl" data-i18n="sam.stat_total">Toplam Başarım</div>
             </div>
           </div>
 
           <div class="sam-stat-box">
             <div>
               <div class="sam-stat-val" id="sam-stat-lua" style="color:var(--warn);">0</div>
-              <div class="sam-stat-lbl">Aktif Yapılandırılan</div>
+              <div class="sam-stat-lbl" data-i18n="sam.stat_lua">Aktif Yapılandırılan</div>
             </div>
           </div>
         </div>
@@ -373,13 +377,13 @@
         <!-- Filtre ve Arama Çubuğu -->
         <div class="sam-filter-bar hidden" id="sam-filter-bar">
           <div class="sam-filter-group">
-            <button class="sam-filter-btn active" onclick="samSetFilter('all', this)">Tümü</button>
-            <button class="sam-filter-btn" onclick="samSetFilter('unlocked', this)">Açık</button>
-            <button class="sam-filter-btn" onclick="samSetFilter('locked', this)">Kilitli</button>
+            <button class="sam-filter-btn active" onclick="samSetFilter('all', this)" data-i18n="sam.filter_all">Tümü</button>
+            <button class="sam-filter-btn" onclick="samSetFilter('unlocked', this)" data-i18n="sam.filter_unlocked">Açık</button>
+            <button class="sam-filter-btn" onclick="samSetFilter('locked', this)" data-i18n="sam.filter_locked">Kilitli</button>
           </div>
           <div class="search-box">
             <span class="search-icon"></span>
-            <input type="search" class="input" placeholder="Başarım ara…" oninput="samFilter(this.value)">
+            <input type="search" class="input" placeholder="Başarım ara…" data-i18n-placeholder="sam.search_ach_placeholder" oninput="samFilter(this.value)">
           </div>
         </div>
 
@@ -393,49 +397,46 @@
     <section id="page-idle" class="page">
       <div class="page-header">
         <div>
-          <span class="page-title">Kart & Saat Kasma (Idle Farmer)</span>
+          <span class="page-title" data-i18n="idle.title">Kart & Saat Kasma (Idle Farmer)</span>
           <span style="font-size:12px;color:var(--muted);margin-left:8px;" id="idle-active-indicator"></span>
         </div>
         <div style="display:flex;gap:8px;">
-          <button class="btn btn-ghost btn-sm hidden" id="idle-refresh-btn" onclick="idleRefreshLibrary()">↺ Yenile</button>
-          <button class="btn btn-danger btn-sm hidden" id="idle-stop-all-btn" onclick="idleStopAll()">Tümünü Durdur</button>
+          <button class="btn btn-ghost btn-sm hidden" id="idle-refresh-btn" onclick="idleRefreshLibrary()" data-i18n="idle.btn_refresh">↺ Yenile</button>
+          <button class="btn btn-danger btn-sm hidden" id="idle-stop-all-btn" onclick="idleStopAll()" data-i18n="idle.btn_stop_all">Tümünü Durdur</button>
         </div>
       </div>
-
-      <!-- Detaylı Bilgi Kutusu: yalnızca giriş yapılınca gösterilir, idle-main içinde -->
 
       <!-- Giriş Uyarısı -->
       <div id="idle-login-wall" class="empty-state hidden">
         <div class="empty-icon"></div>
-        <div style="font-size:15px;font-weight:700;margin-bottom:6px;">Steam Hesabı Gerekli</div>
-        <div style="font-size:12px;max-width:360px;margin:0 auto 16px;line-height:1.6;">
+        <div style="font-size:15px;font-weight:700;margin-bottom:6px;" data-i18n="idle.login_required_title">Steam Hesabı Gerekli</div>
+        <div style="font-size:12px;max-width:360px;margin:0 auto 16px;line-height:1.6;" data-i18n="idle.login_required_desc">
           Kart ve saat kasmak için Hesap sekmesinden Steam hesabınızı bağlamanız gerekiyor.
         </div>
-        <button class="btn btn-primary btn-sm" onclick="navigateTo('account')">Hesaba Git →</button>
+        <button class="btn btn-primary btn-sm" onclick="navigateTo('account')" data-i18n="idle.login_required_title">Hesaba Git →</button>
       </div>
 
       <!-- Yükleniyor -->
       <div id="idle-loading" class="empty-state hidden">
         <div class="spin" style="width:28px;height:28px;margin-bottom:14px;"></div>
-        <div>Kütüphane yükleniyor…</div>
+        <div data-i18n="idle.loading">Kütüphane yükleniyor…</div>
       </div>
 
       <!-- Ana İçerik -->
       <div id="idle-main" class="hidden">
 
-        <!-- Bilgi Kutusu (yalnızca giriş yapılınca görünür) -->
+        <!-- Bilgi Kutusu -->
         <div class="info-callout">
-          <h3>Kart ve Saat Kasma Rehberi</h3>
-          <p>
+          <h3 data-i18n="idle.guide_title">Kart ve Saat Kasma Rehberi</h3>
+          <p data-i18n="idle.guide_desc">
             <b>Nasıl Çalışır?</b> İstediğiniz oyunun yanındaki <b>Kas</b> butonuna bastığınızda, uygulama Steam istemciniz üzerinden oyunu arka planda "Oynuyor" sinyaliyle başlatır. Oyun yüklü olmasa bile oynama süresi artar ve kart düşürme hakkınız varsa kartlar envanterinize düşmeye başlar.
             <br><b>Kart Hakkı Kontrolü:</b> Aşağıdaki filtreden <i>"Kart Hakkı Olanlar"</i> seçeneğini seçerek yalnızca halen kart düşürme hakkınız bulunan oyunları listeleyebilirsiniz.
           </p>
         </div>
 
-
         <!-- Şu An Kasılanlar -->
         <div id="idle-running-section" class="hidden">
-          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;" data-i18n="idle.running_title">
             Şu An Kasılan Oyunlar
           </div>
           <div class="idle-running-list" id="idle-running-list"></div>
@@ -444,18 +445,18 @@
         <!-- Bilgi Kartları -->
         <div class="idle-top-row">
           <div class="idle-info-box">
-            <h3>Kasılan Oyun</h3>
+            <h3 data-i18n="idle.stat_idling">Kasılan Oyun</h3>
             <div class="idle-count-big" id="idle-active-count">0</div>
-            <div class="idle-count-sub">aktif işlem</div>
+            <div class="idle-count-sub" data-i18n="idle.stat_active_proc">aktif işlem</div>
           </div>
           <div class="idle-info-box">
-            <h3>Kütüphane</h3>
+            <h3 data-i18n="idle.stat_library">Kütüphane</h3>
             <div class="idle-count-big" id="idle-lib-count">—</div>
-            <div class="idle-count-sub">oyun</div>
+            <div class="idle-count-sub" data-i18n="idle.stat_games">oyun</div>
           </div>
           <div class="idle-info-box" style="flex:2;">
-            <h3>İpucu & Arka Plan</h3>
-            <div style="font-size:11px;color:var(--muted);line-height:1.7;">
+            <h3 data-i18n="idle.stat_tip_title">İpucu & Arka Plan</h3>
+            <div style="font-size:11px;color:var(--muted);line-height:1.7;" data-i18n="idle.stat_tip_desc">
               Pencereyi kapatabilir veya sol alttaki <b>Tray'e Küçült</b> butonuyla sistem tepsisinde sessizce çalışmasını sağlayabilirsiniz.
             </div>
           </div>
@@ -463,17 +464,17 @@
 
         <!-- Arama & Filtre -->
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px;flex-wrap:wrap;">
-          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;" data-i18n="idle.game_list_title">
             Oyun Listesi
           </div>
           <div style="display:flex;gap:8px;align-items:center;">
             <select class="input" id="idle-filter-cards" onchange="idleApplyFilter()" style="font-size:11px;padding:6px 10px;">
-              <option value="all">Tüm Oyunlar</option>
-              <option value="cards">Kart Hakkı Olanlar</option>
+              <option value="all" data-i18n="idle.filter_all">Tüm Oyunlar</option>
+              <option value="cards" data-i18n="idle.filter_cards">Kart Hakkı Olanlar</option>
             </select>
             <div class="search-box">
               <span class="search-icon"></span>
-              <input type="search" class="input" style="width:180px;" placeholder="Oyun ara…" oninput="idleFilter(this.value)" id="idle-search">
+              <input type="search" class="input" style="width:180px;" placeholder="Oyun ara…" data-i18n-placeholder="idle.search_placeholder" oninput="idleFilter(this.value)" id="idle-search">
             </div>
           </div>
         </div>
@@ -485,13 +486,13 @@
     <!-- ── Page: Steam Account ─────────────────────────────────── -->
     <section id="page-account" class="page">
       <div class="page-header">
-        <span class="page-title">Steam Hesabı</span>
-        <button class="btn btn-ghost btn-sm hidden" id="account-logout-btn" onclick="accountLogout()">Çıkış Yap</button>
+        <span class="page-title" data-i18n="account.title">Steam Hesabı</span>
+        <button class="btn btn-ghost btn-sm hidden" id="account-logout-btn" onclick="accountLogout()" data-i18n="account.btn_logout">Çıkış Yap</button>
       </div>
 
       <div class="info-callout">
-        <h3>Steam Hesabı Entegrasyonu</h3>
-        <p>
+        <h3 data-i18n="account.guide_title">Steam Hesabı Entegrasyonu</h3>
+        <p data-i18n="account.guide_desc">
           Steam Web API Key'inizi bağladığınızda, gerçek Steam kütüphanenizdeki tüm oyunlar, rozetler ve kalan kart düşürme haklarınız otomatik olarak uygulamaya aktarılır.
         </p>
       </div>
@@ -502,37 +503,37 @@
         <div class="account-info">
           <div class="account-name" id="account-name">—</div>
           <div class="account-id" id="account-id-label">Steam ID: —</div>
-          <span class="account-status-badge connected">● Bağlı</span>
+          <span class="account-status-badge connected" data-i18n="account.badge_connected">● Bağlı</span>
         </div>
       </div>
 
       <div id="account-games-info" class="account-games-info hidden">
         <div class="account-games-count" id="account-games-count">0</div>
         <div>
-          <div style="font-weight:700;font-size:13px;">Kütüphanedeki Oyun</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px;">Kart kasma ve Başarım yöneticisinde kullanılabilir.</div>
+          <div style="font-weight:700;font-size:13px;" data-i18n="account.lib_games_title">Kütüphanedeki Oyun</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;" data-i18n="account.lib_games_desc">Kart kasma ve Başarım yöneticisinde kullanılabilir.</div>
         </div>
-        <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="accountRefreshLibrary()">↺ Kütüphaneyi Yenile</button>
+        <button class="btn btn-ghost btn-sm" style="margin-left:auto;" onclick="accountRefreshLibrary()" data-i18n="account.btn_refresh_lib">↺ Kütüphaneyi Yenile</button>
       </div>
 
       <!-- Giriş Formu -->
       <div id="account-login-form" class="account-login-form">
-        <h3>Steam Web API ile Bağlan</h3>
+        <h3 data-i18n="account.form_title">Steam Web API ile Bağlan</h3>
         <div class="account-field">
-          <label>Steam Web API Key</label>
-          <input type="password" class="input" id="account-api-key" placeholder="32 haneli API key">
+          <label data-i18n="account.api_key_label">Steam Web API Key</label>
+          <input type="password" class="input" id="account-api-key" placeholder="32 haneli API key" data-i18n-placeholder="account.api_key_placeholder">
           <div class="field-hint">
             API key'inizi <a href="#" onclick="pywebview.api.open_in_browser('https://steamcommunity.com/dev/apikey');return false;">steamcommunity.com/dev/apikey</a> adresinden ücretsiz alabilirsiniz.
           </div>
         </div>
 
         <div class="account-field">
-          <label>Steam64 ID veya Profil Linki</label>
-          <input type="text" class="input" id="account-steam-id" placeholder="7656119... veya profil URL">
+          <label data-i18n="account.steamid_label">Steam64 ID veya Profil Linki</label>
+          <input type="text" class="input" id="account-steam-id" placeholder="7656119... veya profil URL" data-i18n-placeholder="account.steamid_placeholder">
         </div>
 
         <div style="display:flex;align-items:center;gap:12px;margin-top:16px;">
-          <button class="btn btn-primary" id="account-login-btn" onclick="accountLogin()">Bağlan</button>
+          <button class="btn btn-primary" id="account-login-btn" onclick="accountLogin()" data-i18n="account.btn_connect">Bağlan</button>
           <span id="account-login-status" style="font-size:11px;"></span>
         </div>
       </div>
@@ -544,28 +545,29 @@
       <!-- Arama Görünümü -->
       <div id="dlc-search-view">
         <div class="page-header">
-          <span class="page-title">DLC Unlocker</span>
+          <span class="page-title" data-i18n="dlc.title">DLC Unlocker</span>
         </div>
 
         <div class="info-callout">
-          <h3>DLC Unlocker Nasıl Çalışır?</h3>
-          <p>
+          <h3 data-i18n="dlc.guide_title">DLC Unlocker Nasıl Çalışır?</h3>
+          <p data-i18n="dlc.guide_desc">
             Steam oyununun App ID'sini girin. Uygulama, Steam mağazasından o oyuna ait tüm DLC'leri çeker ve listeleyerek seçtiklerinizi <code>marcellus.lua</code> dosyasına ekler. Steam yeniden başlatıldığında DLC'ler aktif olur.
             <br><b>Not:</b> Bu özellik yalnızca Lua crack yüklü oyunlar için çalışır.
           </p>
         </div>
 
         <div class="settings-block" style="max-width:480px;">
-          <h3>Oyun App ID'si ile Ara</h3>
-          <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6;">
+          <h3 data-i18n="dlc.search_title">Oyun App ID'si ile Ara</h3>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6;" data-i18n="dlc.search_desc">
             SteamDB veya Steam mağaza URL'sinden oyunun App ID'sini bulabilirsiniz.
           </p>
           <div style="display:flex;gap:8px;">
             <input type="text" class="input" id="dlc-appid-input"
                    placeholder="Örn: 1091500"
+                   data-i18n-placeholder="dlc.appid_placeholder"
                    style="flex:1;"
                    onkeydown="if(event.key==='Enter') dlcLookup()">
-            <button class="btn btn-primary btn-sm" onclick="dlcLookup()">DLC Listesini Getir</button>
+            <button class="btn btn-primary btn-sm" onclick="dlcLookup()" data-i18n="dlc.btn_fetch">DLC Listesini Getir</button>
           </div>
         </div>
       </div>
@@ -574,12 +576,12 @@
       <div id="dlc-detail-view" class="hidden">
         <div class="page-header">
           <div style="display:flex;align-items:center;gap:12px;">
-            <button class="btn btn-ghost btn-sm" onclick="dlcBackToSearch()">← Geri</button>
-            <span class="page-title" id="dlc-game-title">DLC Listesi</span>
+            <button class="btn btn-ghost btn-sm" onclick="dlcBackToSearch()" data-i18n="dlc.btn_back">← Geri</button>
+            <span class="page-title" id="dlc-game-title" data-i18n="dlc.list_title">DLC Listesi</span>
           </div>
           <div style="display:flex;gap:8px;">
-            <button class="btn btn-primary btn-sm" id="dlc-unlock-all-btn" onclick="dlcUnlockAll()">Tümünü Aç</button>
-            <button class="btn btn-danger btn-sm" id="dlc-lock-all-btn" onclick="dlcLockAll()">Tümünü Kilitle</button>
+            <button class="btn btn-primary btn-sm" id="dlc-unlock-all-btn" onclick="dlcUnlockAll()" data-i18n="dlc.btn_unlock_all">Tümünü Aç</button>
+            <button class="btn btn-danger btn-sm" id="dlc-lock-all-btn" onclick="dlcLockAll()" data-i18n="dlc.btn_lock_all">Tümünü Kilitle</button>
           </div>
         </div>
 
@@ -587,28 +589,28 @@
         <div class="dlc-stats-row">
           <div class="dlc-stat-box">
             <div class="dlc-stat-val" id="dlc-stat-total">0</div>
-            <div class="dlc-stat-lbl">Toplam DLC</div>
+            <div class="dlc-stat-lbl" data-i18n="dlc.stat_total">Toplam DLC</div>
           </div>
           <div class="dlc-stat-box">
             <div class="dlc-stat-val" style="color:var(--success);" id="dlc-stat-unlocked">0</div>
-            <div class="dlc-stat-lbl">Açık</div>
+            <div class="dlc-stat-lbl" data-i18n="dlc.stat_unlocked">Açık</div>
           </div>
           <div class="dlc-stat-box">
             <div class="dlc-stat-val" style="color:var(--muted);" id="dlc-stat-locked">0</div>
-            <div class="dlc-stat-lbl">Kilitli</div>
+            <div class="dlc-stat-lbl" data-i18n="dlc.stat_locked">Kilitli</div>
           </div>
         </div>
 
         <!-- Filtre & Arama -->
         <div class="sam-filter-bar" style="margin-bottom:12px;">
           <div class="sam-filter-group">
-            <button class="dlc-filter-btn sam-filter-btn active" onclick="dlcSetFilter('all', this)">Tümü</button>
-            <button class="dlc-filter-btn sam-filter-btn" onclick="dlcSetFilter('unlocked', this)">Açık</button>
-            <button class="dlc-filter-btn sam-filter-btn" onclick="dlcSetFilter('locked', this)">Kilitli</button>
+            <button class="dlc-filter-btn sam-filter-btn active" onclick="dlcSetFilter('all', this)" data-i18n="dlc.filter_all">Tümü</button>
+            <button class="dlc-filter-btn sam-filter-btn" onclick="dlcSetFilter('unlocked', this)" data-i18n="dlc.filter_unlocked">Açık</button>
+            <button class="dlc-filter-btn sam-filter-btn" onclick="dlcSetFilter('locked', this)" data-i18n="dlc.filter_locked">Kilitli</button>
           </div>
           <div class="search-box">
             <span class="search-icon"></span>
-            <input type="search" class="input" placeholder="DLC ara..." oninput="dlcSearch(this.value)">
+            <input type="search" class="input" placeholder="DLC ara..." data-i18n-placeholder="dlc.search_placeholder" oninput="dlcSearch(this.value)">
           </div>
         </div>
 
@@ -621,48 +623,60 @@
     <!-- ── Page: Settings ──────────────────────────────────────── -->
     <section id="page-settings" class="page">
       <div class="page-header">
-        <span class="page-title">Ayarlar</span>
+        <span class="page-title" data-i18n="settings.title">Ayarlar</span>
       </div>
 
+      <!-- Dil / Language Seçimi -->
       <div class="settings-block">
-        <h3>Steam Yolu</h3>
-        <div class="settings-row">
-          <label>Klasör</label>
-          <input type="text" class="input" id="steam-path" placeholder="C:\Program Files (x86)\Steam">
-          <button class="btn btn-ghost btn-sm" onclick="browseSteam()">Gözat</button>
-          <button class="btn btn-ghost btn-sm" onclick="autoDetect()">Otomatik</button>
+        <h3 data-i18n="settings.lang_section">Dil / Language</h3>
+        <div class="settings-row" style="display:flex;align-items:center;gap:12px;">
+          <label data-i18n="settings.lang_label">Arayüz Dili</label>
+          <div class="lang-selector-group">
+            <button class="btn btn-ghost btn-sm lang-btn active" data-lang="tr" onclick="setLanguage('tr')">🇹🇷 Türkçe</button>
+            <button class="btn btn-ghost btn-sm lang-btn" data-lang="en" onclick="setLanguage('en')">🇬🇧 English</button>
+          </div>
         </div>
-        <button class="btn btn-primary btn-sm" onclick="savePath()" style="margin-top:6px;">Kaydet</button>
       </div>
 
       <div class="settings-block">
-        <h3>Steam Kontrolleri</h3>
+        <h3 data-i18n="settings.path_section">Steam Yolu</h3>
+        <div class="settings-row">
+          <label data-i18n="settings.path_label">Klasör</label>
+          <input type="text" class="input" id="steam-path" placeholder="C:\Program Files (x86)\Steam">
+          <button class="btn btn-ghost btn-sm" onclick="browseSteam()" data-i18n="settings.btn_browse">Gözat</button>
+          <button class="btn btn-ghost btn-sm" onclick="autoDetect()" data-i18n="settings.btn_autodetect">Otomatik</button>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="savePath()" style="margin-top:6px;" data-i18n="settings.btn_save">Kaydet</button>
+      </div>
+
+      <div class="settings-block">
+        <h3 data-i18n="settings.controls_section">Steam Kontrolleri</h3>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-ghost btn-sm" onclick="restartSteam()">↺ Yeniden Başlat</button>
-          <button class="btn btn-ghost btn-sm" onclick="downloadDll()">⬇ DLL Kur</button>
-          <button class="btn btn-danger btn-sm" onclick="removeDll()">✕ DLL Kaldır</button>
+          <button class="btn btn-ghost btn-sm" onclick="restartSteam()" data-i18n="settings.btn_restart">↺ Yeniden Başlat</button>
+          <button class="btn btn-ghost btn-sm" onclick="downloadDll()" data-i18n="settings.btn_download_dll">⬇ DLL Kur</button>
+          <button class="btn btn-danger btn-sm" onclick="removeDll()" data-i18n="settings.btn_remove_dll">✕ DLL Kaldır</button>
           <div id="tray-btn-wrap" style="display:none;">
-            <button class="btn btn-ghost btn-sm" onclick="minimizeToTray()">▼ Tray'e Küçült</button>
+            <button class="btn btn-ghost btn-sm" onclick="minimizeToTray()" data-i18n="settings.btn_tray">▼ Tray'e Küçült</button>
           </div>
         </div>
       </div>
 
       <div class="credits-block">
-        <h3>Hakkında</h3>
+        <h3 data-i18n="settings.about_section">Hakkında</h3>
         <div class="credits-row">
-          <span class="credits-label">Developer</span>
+          <span class="credits-label" data-i18n="settings.developer_label">Developer</span>
           <a class="credits-link" href="#" onclick="pywebview.api.open_in_browser('https://fadimrak.xyz');return false;">fadimrak</a>
         </div>
         <div class="credits-row">
-          <span class="credits-label">DLL'ler</span>
+          <span class="credits-label" data-i18n="settings.dlls_label">DLL'ler</span>
           <span class="credits-val">toprak1224</span>
         </div>
         <div class="credits-row">
-          <span class="credits-label">Web</span>
+          <span class="credits-label" data-i18n="settings.web_label">Web</span>
           <a class="credits-link" href="#" onclick="pywebview.api.open_in_browser('https://fadimrak.xyz');return false;">fadimrak.xyz</a>
         </div>
         <div class="credits-row">
-          <span class="credits-label">Versiyon</span>
+          <span class="credits-label" data-i18n="settings.version_label">Versiyon</span>
           <span class="credits-val" id="settings-ver">v…</span>
         </div>
       </div>
@@ -673,20 +687,20 @@
 
 <!-- ── Context Menu ─────────────────────────────────────────────── -->
 <div id="ctx-menu" class="hidden">
-  <div class="ctx-item" onclick="ctxSteamDB()">SteamDB'de Aç</div>
-  <div class="ctx-item" onclick="ctxCopyId()">App ID Kopyala</div>
+  <div class="ctx-item" onclick="ctxSteamDB()" data-i18n="ctx.steamdb">SteamDB'de Aç</div>
+  <div class="ctx-item" onclick="ctxCopyId()" data-i18n="ctx.copy_appid">App ID Kopyala</div>
   <div class="ctx-sep"></div>
-  <div class="ctx-item danger" onclick="ctxRemove()">Oyunu Kaldır</div>
+  <div class="ctx-item danger" onclick="ctxRemove()" data-i18n="ctx.remove_game">Oyunu Kaldır</div>
 </div>
 
 <!-- ── Confirm Modal ────────────────────────────────────────────── -->
 <div id="confirm-modal" class="modal-overlay hidden">
   <div class="modal-box">
-    <h3 id="confirm-title">Emin misiniz?</h3>
+    <h3 id="confirm-title" data-i18n="modal.are_you_sure">Emin misiniz?</h3>
     <p id="confirm-msg" style="margin-top:8px;"></p>
     <div class="modal-actions">
-      <button class="btn btn-ghost btn-sm" id="confirm-no">İptal</button>
-      <button class="btn btn-danger btn-sm" id="confirm-yes">Onayla</button>
+      <button class="btn btn-ghost btn-sm" id="confirm-no" data-i18n="modal.cancel">İptal</button>
+      <button class="btn btn-danger btn-sm" id="confirm-yes" data-i18n="modal.confirm">Onayla</button>
     </div>
   </div>
 </div>
@@ -694,22 +708,22 @@
 <!-- ── Legal Modal ──────────────────────────────────────────────── -->
 <div id="legal-modal" class="modal-overlay hidden">
   <div class="modal-box legal-box">
-    <h2>Fadimrak Steam Tool — Yasal Uyarı</h2>
+    <h2 data-i18n="legal.title">Fadimrak Steam Tool — Yasal Uyarı</h2>
     <div class="legal-scroll">
-      <h4>Kullanım Şartları</h4>
-      Bu uygulama yalnızca <strong>eğitim ve araştırma amaçlıdır</strong>. Geliştirici kötüye kullanımdan sorumlu tutulamaz.
-      <h4>Telif Hakkı</h4>
-      Steam, Valve Corporation'ın tescilli markasıdır. Bu uygulama Valve ile bağlantılı değildir.
-      <h4>Sorumluluk Reddi</h4>
-      Uygulama "olduğu gibi" sunulmaktadır. Kullanımdan doğan her türlü sorumluluk kullanıcıya aittir.
+      <h4 data-i18n="legal.terms_title">Kullanım Şartları</h4>
+      <span data-i18n="legal.terms_text">Bu uygulama yalnızca <strong>eğitim ve araştırma amaçlıdır</strong>. Geliştirici kötüye kullanımdan sorumlu tutulamaz.</span>
+      <h4 data-i18n="legal.copyright_title">Telif Hakkı</h4>
+      <span data-i18n="legal.copyright_text">Steam, Valve Corporation'ın tescilli markasıdır. Bu uygulama Valve ile bağlantılı değildir.</span>
+      <h4 data-i18n="legal.disclaimer_title">Sorumluluk Reddi</h4>
+      <span data-i18n="legal.disclaimer_text">Uygulama "olduğu gibi" sunulmaktadır. Kullanımdan doğan her türlü sorumluluk kullanıcıya aittir.</span>
     </div>
     <label class="legal-check-row">
       <input type="checkbox" id="legal-check" onchange="document.getElementById('accept-btn').disabled=!this.checked">
-      <span>Yasal uyarıyı okudum ve kabul ediyorum.</span>
+      <span data-i18n="legal.checkbox_label">Yasal uyarıyı okudum ve kabul ediyorum.</span>
     </label>
     <div class="modal-actions">
-      <button class="btn btn-ghost btn-sm" onclick="rejectLegal()">Reddet & Çıkış</button>
-      <button class="btn btn-primary btn-sm" id="accept-btn" disabled onclick="acceptLegal()">Kabul Et</button>
+      <button class="btn btn-ghost btn-sm" onclick="rejectLegal()" data-i18n="legal.btn_reject">Reddet & Çıkış</button>
+      <button class="btn btn-primary btn-sm" id="accept-btn" disabled onclick="acceptLegal()" data-i18n="legal.btn_accept">Kabul Et</button>
     </div>
   </div>
 </div>
@@ -718,6 +732,7 @@
 <div id="toast-container"></div>
 
 <!-- ── Scripts ──────────────────────────────────────────────────── -->
+<script src="js/i18n.js"></script>
 <script src="js/core.js"></script>
 <script src="js/library.js"></script>
 <script src="js/add_game.js"></script>

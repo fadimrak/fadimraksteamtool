@@ -72,13 +72,20 @@ async function boot() {
   const settingsVerEl = document.getElementById('settings-ver');
   if (settingsVerEl) settingsVerEl.textContent = 'v' + vd.version;
 
+  // Settings & Language
+  const s = await pywebview.api.get_settings();
+  if (s && s.lang) {
+    setLanguage(s.lang, false);
+  } else {
+    setLanguage('tr', false);
+  }
+
   fill.style.width = '55%';
   await loadLibrary();
 
   fill.style.width = '80%';
   checkUpdate();
-  const s = await pywebview.api.get_settings();
-  if (s.steam_path) {
+  if (s && s.steam_path) {
     const spInput = document.getElementById('steam-path');
     if (spInput) spInput.value = s.steam_path;
     document.getElementById('sidebar-steam').textContent = 'steam';
@@ -115,21 +122,22 @@ window.onPythonEvent = function({ event, data }) {
   switch (event) {
     case 'install_progress': {
       const btn = document.querySelector(`#result-${data.app_id} .install-btn`);
-      if (btn) btn.textContent = data.step === 'downloading' ? 'İndiriliyor…' : 'Kuruluyor…';
+      if (btn) btn.textContent = data.step === 'downloading' ? t('add.btn_downloading') : t('add.btn_installing');
       break;
     }
     case 'install_done': {
-      toast('success', 'Kuruldu', data.game_name);
+      toast('success', t('add.toast_installed'), data.game_name);
       const btn = document.querySelector(`#result-${data.app_id} .install-btn`);
-      if (btn) { btn.className = 'btn btn-ghost btn-sm'; btn.textContent = 'Yüklendi'; btn.disabled = true; }
+      if (btn) { btn.className = 'btn btn-ghost btn-sm'; btn.textContent = t('add.btn_installed'); btn.disabled = true; }
       installedGames.push({ app_id: data.app_id, name: data.game_name, cover: data.cover });
       if (currentPage === 'library') renderLibrary(installedGames);
       break;
     }
     case 'install_error': {
-      toast('error', 'Kurulum Hatası', data.error);
+      const errMsg = (data.error && data.error.includes('Mevcut değil')) ? t('add.toast_err_unavailable') : (data.error || '');
+      toast('error', t('add.toast_install_err'), errMsg);
       const btn = document.querySelector(`#result-${data.app_id} .install-btn`);
-      if (btn) { btn.className = 'btn btn-primary btn-sm'; btn.textContent = 'İndir'; btn.disabled = false; }
+      if (btn) { btn.className = 'btn btn-primary btn-sm'; btn.textContent = t('add.btn_download'); btn.disabled = false; }
       break;
     }
     case 'game_name_updated': {
@@ -148,7 +156,7 @@ window.onPythonEvent = function({ event, data }) {
       const label = document.getElementById('of-progress-label');
       const pct   = data.pct || 0;
       if (bar)   bar.style.width   = pct + '%';
-      if (label) label.textContent = pct < 100 ? `Kuruluyor… %${pct}` : 'Tamamlanıyor…';
+      if (label) label.textContent = pct < 100 ? t('onlinefix.label_installing_pct', { pct }) : t('onlinefix.label_completing');
       break;
     }
     case 'fix_done': {
@@ -156,9 +164,9 @@ window.onPythonEvent = function({ event, data }) {
       const label = document.getElementById('of-progress-label');
       const btn   = document.getElementById('of-install-btn');
       if (bar)   { bar.style.width = '100%'; bar.style.background = 'var(--success)'; }
-      if (label) label.textContent = `Kurulum tamamlandı!`;
-      if (btn)   { btn.textContent = 'Tamamlandı'; btn.disabled = true; }
-      toast('success', 'Fix Kuruldu', `${data.archive} → ${data.game_dir}`);
+      if (label) label.textContent = t('onlinefix.label_done');
+      if (btn)   { btn.textContent = t('onlinefix.btn_done'); btn.disabled = true; }
+      toast('success', t('onlinefix.toast_done'), `${data.archive} → ${data.game_dir}`);
       document.getElementById('of-num1')?.classList.add('done');
       document.getElementById('of-num2')?.classList.add('done');
       break;
@@ -166,9 +174,9 @@ window.onPythonEvent = function({ event, data }) {
     case 'fix_error': {
       const label = document.getElementById('of-progress-label');
       const btn   = document.getElementById('of-install-btn');
-      if (label) { label.textContent = `Hata: ${data.error}`; label.style.color = 'var(--danger)'; }
-      if (btn)   { btn.textContent = 'Fix\'i Kur'; btn.disabled = false; }
-      toast('error', 'Fix Hatası', data.error);
+      if (label) { label.textContent = `${t('toast.error')}: ${data.error}`; label.style.color = 'var(--danger)'; }
+      if (btn)   { btn.textContent = t('onlinefix.btn_install'); btn.disabled = false; }
+      toast('error', t('onlinefix.toast_err'), data.error);
       break;
     }
 
@@ -183,24 +191,24 @@ window.onPythonEvent = function({ event, data }) {
     }
     case 'sam_error': {
       _samShowError(data.error);
-      toast('error', 'SAM Hatası', data.error);
+      toast('error', t('sam.toast_err'), data.error);
       break;
     }
     case 'sam_unlock_done': {
       (data.names || []).forEach(n => _samSetRowState(n, 'lua'));
       if (data.warning) {
-        toast('warn', 'Başarım Açıldı (Lua)', data.warning);
+        toast('warn', t('sam.toast_unlocked_lua'), data.warning);
       } else {
-        toast('success', 'Başarım Açıldı', 'Başarımlar aktif edildi.');
+        toast('success', t('sam.toast_unlocked'), '');
       }
       break;
     }
     case 'sam_lock_done': {
       (data.names || []).forEach(n => _samSetRowState(n, 'locked'));
       if (data.warning) {
-        toast('warn', 'Başarım Kilitlendi (Lua)', data.warning);
+        toast('warn', t('sam.toast_locked_lua'), data.warning);
       } else {
-        toast('info', 'Başarım Kilitlendi', 'Başarımlar kilitlendi.');
+        toast('info', t('sam.toast_locked'), '');
       }
       break;
     }
@@ -209,15 +217,15 @@ window.onPythonEvent = function({ event, data }) {
         document.querySelectorAll('.sam-ach-row').forEach(r => {
           if (!r.classList.contains('unlocked')) _samSetRowState(r.dataset.name, 'lua');
         });
-        toast('success', 'Tümü Açıldı', 'Tüm başarımlar açıldı.');
+        toast('success', t('sam.toast_all_unlocked'), t('sam.toast_all_unlocked_msg', { count: '' }));
       } else {
-        toast('error', 'Hata', data.error);
+        toast('error', t('toast.error'), data.error);
       }
       break;
     }
     case 'sam_lock_all_done': {
       document.querySelectorAll('.sam-ach-row.lua-unlocked').forEach(r => _samSetRowState(r.dataset.name, 'locked'));
-      toast('info', 'Tümü Kilitlendi', 'Tüm açık başarımlar kilitlendi.');
+      toast('info', t('sam.toast_all_locked'), t('sam.toast_all_locked_msg', { count: '' }));
       break;
     }
 
@@ -225,7 +233,7 @@ window.onPythonEvent = function({ event, data }) {
     case 'idle_started': {
       _idleMarkRunning(data.app_id, true);
       _idleUpdateRunningSection();
-      toast('success', 'Kasma Başladı', data.name);
+      toast('success', t('idle.toast_started'), data.name);
       break;
     }
     case 'idle_tick': {
@@ -238,21 +246,22 @@ window.onPythonEvent = function({ event, data }) {
     case 'idle_stopped': {
       _idleMarkRunning(data.app_id, false);
       _idleUpdateRunningSection();
-      toast('info', 'Kasma Durdu', data.elapsed_str || '');
+      toast('info', t('idle.toast_stopped'), data.elapsed_str || '');
       break;
     }
     case 'idle_all_stopped': {
       (data.stopped || []).forEach(id => _idleMarkRunning(id, false));
       _idleUpdateRunningSection();
-      toast('info', 'Tümü Durduruldu', `${(data.stopped || []).length} oyun durduruldu.`);
+      const count = (data.stopped || []).length;
+      toast('info', t('idle.toast_all_stopped'), t('idle.toast_all_stopped_msg', { count }));
       break;
     }
     case 'idle_card_info': {
       const el = document.getElementById(`idle-cards-${data.app_id}`);
       if (el) {
         el.textContent = data.has_cards
-          ? (data.card_count > 0 ? `${data.card_count} kart` : 'Kart var')
-          : '— Kart yok';
+          ? (data.card_count > 0 ? t('idle.drops_remaining', { count: data.card_count }) : t('idle.has_cards'))
+          : t('idle.no_cards');
         if (data.has_cards) el.classList.add('has');
       }
       break;
@@ -262,8 +271,8 @@ window.onPythonEvent = function({ event, data }) {
         const el = document.getElementById(`idle-cards-${aid}`);
         if (el) {
           el.textContent = info.has_cards
-            ? (info.card_count > 0 ? `${info.card_count} kart` : 'Kart var')
-            : '— Kart yok';
+            ? (info.card_count > 0 ? t('idle.drops_remaining', { count: info.card_count }) : t('idle.has_cards'))
+            : t('idle.no_cards');
           if (info.has_cards) el.classList.add('has');
         }
       });
@@ -287,7 +296,7 @@ window.onPythonEvent = function({ event, data }) {
       break;
     }
     case 'owned_games_error': {
-      toast('error', 'Kütüphane Hatası', data.error);
+      toast('error', t('toast.error'), data.error);
       break;
     }
     case 'idle_games_loaded': {
@@ -297,7 +306,7 @@ window.onPythonEvent = function({ event, data }) {
     }
     case 'idle_games_error': {
       document.getElementById('idle-loading')?.classList.add('hidden');
-      toast('error', 'Kütüphane Hatası', data.error);
+      toast('error', t('toast.error'), data.error);
       break;
     }
 
@@ -350,7 +359,7 @@ document.addEventListener('click', hideCtxMenu);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') hideCtxMenu(); });
 
 function ctxSteamDB() { if (ctxTarget) pywebview.api.open_in_browser(`https://steamdb.info/app/${ctxTarget.appId}/`); }
-function ctxCopyId()  { if (ctxTarget) navigator.clipboard?.writeText(ctxTarget.appId).then(() => toast('info', 'Kopyalandı', `App ID: ${ctxTarget.appId}`)); }
+function ctxCopyId()  { if (ctxTarget) navigator.clipboard?.writeText(ctxTarget.appId).then(() => toast('info', t('ctx.toast_copied'), `App ID: ${ctxTarget.appId}`)); }
 function ctxRemove()  { if (ctxTarget) confirmRemove(ctxTarget.appId); }
 
 // ── Confirm Modal ──────────────────────────────────────────────────

@@ -12,7 +12,7 @@ async function idleInit() {
     _idleInited = true;
   }
 
-  // Aktif kasılanları önce her durumda yükle
+  // Load actively idling games first
   try {
     const st = await pywebview.api.idle_get_status();
     if (st && st.running && st.running.length) {
@@ -33,7 +33,6 @@ async function idleInit() {
     } else if (_accountLoggedIn) {
       _idleLoadGames([]);
     } else {
-      // Hesap bağlı değil ve yerel oyun bulunamadıysa giriş duvarını göster ama sayfa kontrollerini erişilebilir tut
       _idleShowLoginWall();
     }
   } catch (e) {
@@ -72,7 +71,7 @@ function _idleLoadGames(games) {
 
   _idleRenderGrid();
 
-  // Toplu kart hakkı bilgisi çek (ilk 100 oyun)
+  // Fetch batch card drop info (first 100 games)
   const ids = _idleAllGames.map(g => String(g.appid));
   if (ids.length > 0) {
     try {
@@ -92,7 +91,7 @@ function _idleRenderGrid() {
   if (q) list = list.filter(g => (g.name || '').toLowerCase().includes(q) || String(g.appid).includes(q));
 
   if (!list.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon"></div><div>Oyun bulunamadı.</div></div>`;
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon"></div><div>${t('idle.no_games')}</div></div>`;
     return;
   }
 
@@ -117,24 +116,25 @@ function _idleMakeCard(game) {
 
   const isRunning = _idleRunning.has(appId);
   const btnCls    = isRunning ? 'idle-btn running' : 'idle-btn';
-  const btnTxt    = isRunning ? 'Durdur' : 'Kas';
+  const btnTxt    = isRunning ? t('idle.btn_stop') : t('idle.btn_idle');
 
   const remDrops  = parseInt(game.cards_remaining || '0', 10);
   const hasDrops  = Boolean(game.has_drops || remDrops > 0);
 
-  let dropsHtml = '— Kart hakkı yok';
+  let dropsHtml = t('idle.no_drops');
   let dropsClass = 'idle-card-cards';
   if (hasDrops && remDrops > 0) {
-    dropsHtml  = `${remDrops} kart hakkı`;
+    dropsHtml  = t('idle.drops_remaining', { count: remDrops });
     dropsClass = 'idle-card-cards has';
   } else if (game.has_cards) {
-    dropsHtml  = 'Kart hakkı bitti';
+    dropsHtml  = t('idle.drops_ended');
   }
 
   const pt = game.playtime_forever || 0;
+  const isEn = getCurrentLang() === 'en';
   const ptStr = pt > 0
-    ? (pt >= 60 ? `${Math.floor(pt/60)}s ${pt%60}dk` : `${pt}dk`)
-    : 'Oynanmadı';
+    ? (pt >= 60 ? `${Math.floor(pt/60)}${isEn ? 'h' : 's'} ${pt%60}${isEn ? 'm' : 'dk'}` : `${pt}${isEn ? 'm' : 'dk'}`)
+    : t('idle.never_played');
 
   div.insertAdjacentHTML('beforeend', `
     <div class="idle-card-body">
@@ -144,9 +144,9 @@ function _idleMakeCard(game) {
         <button class="${btnCls}" id="idle-btn-${appId}"
                 onclick="idleToggle('${appId}','${esc(game.name)}',this)">${btnTxt}</button>
       </div>
-      <div style="font-size:10px;color:var(--muted);margin-top:4px;">Toplam Süre: ${ptStr}</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:4px;">${t('idle.total_playtime', { time: ptStr })}</div>
       <div style="font-size:10px;color:var(--success);margin-top:2px;min-height:14px;"
-           id="idle-time-${appId}">${isRunning ? 'Kasılıyor' : ''}</div>
+           id="idle-time-${appId}">${isRunning ? t('idle.label_idling') : ''}</div>
     </div>`);
 
   return div;
@@ -155,18 +155,17 @@ function _idleMakeCard(game) {
 async function idleToggle(appId, name, btn) {
   const aid = String(appId).trim();
   if (_idleRunning.has(aid)) {
-    if (btn) { btn.disabled = true; btn.textContent = 'Durduruluyor…'; }
+    if (btn) { btn.disabled = true; btn.textContent = t('idle.btn_stopping'); }
     await pywebview.api.idle_stop(aid);
   } else {
-    if (btn) { btn.disabled = true; btn.textContent = 'Başlatılıyor…'; }
+    if (btn) { btn.disabled = true; btn.textContent = t('idle.btn_starting'); }
     const res = await pywebview.api.idle_start(aid, name);
     if (!res.ok) {
-      toast('error', 'Hata', res.error || 'Kasma başlatılamadı.');
-      if (btn) { btn.disabled = false; btn.textContent = 'Kas'; }
+      toast('error', t('toast.error'), res.error || t('toast.error'));
+      if (btn) { btn.disabled = false; btn.textContent = t('idle.btn_idle'); }
     }
   }
 }
-
 
 function _idleMarkRunning(appId, running) {
   const aid = String(appId);
@@ -181,7 +180,7 @@ function _idleMarkRunning(appId, running) {
   if (card) card.classList.toggle('is-idling', running);
   if (btn)  {
     btn.disabled = false;
-    btn.textContent = running ? 'Durdur' : 'Kas';
+    btn.textContent = running ? t('idle.btn_stop') : t('idle.btn_idle');
     btn.className   = running ? 'idle-btn running' : 'idle-btn';
   }
   if (time && !running) time.textContent = '';
@@ -209,6 +208,7 @@ function _idleUpdateRunningSection(runningList) {
     if (!_idleRunning.has(el.dataset.appId)) el.remove();
   });
 
+  const isEn = getCurrentLang() === 'en';
   const games = runningList || [..._idleRunning].map(id => ({ app_id: id, name: `App ${id}`, elapsed_str: '' }));
   games.forEach(r => {
     const aid = String(r.app_id);
@@ -224,11 +224,11 @@ function _idleUpdateRunningSection(runningList) {
            onerror="this.style.opacity='.2'" alt="">
       <div class="idle-running-info">
         <div class="idle-running-name">${esc(r.name || `App ${aid}`)}</div>
-        <div class="idle-running-time" id="idle-run-time-${aid}">${esc(r.elapsed_str || '0 sn')}</div>
+        <div class="idle-running-time" id="idle-run-time-${aid}">${esc(r.elapsed_str || (isEn ? '0 s' : '0 sn'))}</div>
       </div>
       <button class="btn btn-danger btn-sm"
               onclick="idleToggle('${aid}','',document.getElementById('idle-btn-${aid}'))">
-        Durdur
+        ${t('idle.btn_stop')}
       </button>`;
     list.appendChild(row);
   });
@@ -240,7 +240,7 @@ function _idleUpdateActiveCount() {
 }
 
 async function idleStopAll() {
-  const ok = await confirm2('Tümünü Durdur', `${_idleRunning.size} oyunun kasması durdurulacak.`);
+  const ok = await confirm2(t('idle.confirm_stop_all_title'), t('idle.confirm_stop_all_msg', { count: _idleRunning.size }));
   if (!ok) return;
   await pywebview.api.idle_stop_all();
 }
@@ -278,5 +278,5 @@ function idleApplyFilter() {
 
 async function minimizeToTray() {
   const res = await pywebview.api.idle_minimize_to_tray();
-  if (!res.ok) toast('warn', 'Tray Yok', 'pystray kurulu değil.');
+  if (!res.ok) toast('warn', t('toast.warn'), t('idle.toast_no_tray'));
 }

@@ -16,7 +16,6 @@ async function accountInit() {
 function _accountSetLoggedIn(steamId, name, avatar) {
   _accountLoggedIn = true;
 
-  // SAM ve Idle sıfırlansın ki yeniden girilince taze yüklensin
   _samInited    = false;
   _idleInited   = false;
 
@@ -37,10 +36,10 @@ function _accountSetLoggedIn(steamId, name, avatar) {
   const idEl = document.getElementById('account-id-label');
   if (idEl) idEl.textContent = `Steam ID: ${steamId}`;
 
-  // Kütüphane oyunlarını çek
+  // Fetch owned games
   pywebview.api.account_get_owned_games(false);
 
-  // O an SAM veya Idle sayfasındaysa direkt yükle
+  // If on SAM or Idle page, refresh immediately
   if (currentPage === 'sam')  samInit();
   if (currentPage === 'idle') idleInit();
 }
@@ -48,7 +47,6 @@ function _accountSetLoggedIn(steamId, name, avatar) {
 function _accountSetLoggedOut() {
   _accountLoggedIn = false;
 
-  // SAM ve Idle sıfırlansın
   _samInited  = false;
   _idleInited = false;
 
@@ -62,7 +60,6 @@ function _accountSetLoggedOut() {
   if (gamesInfo) gamesInfo.classList.add('hidden');
   if (logoutBtn) logoutBtn.classList.add('hidden');
 
-  // Aktif sayfadaysa login duvarını göster
   if (currentPage === 'sam')  _samShowLoginWall();
   if (currentPage === 'idle') _idleShowLoginWall();
 }
@@ -82,38 +79,38 @@ async function accountLogin() {
 
   if (!key || !sid) {
     if (sta) {
-      sta.textContent = 'API key ve Steam ID gereklidir.';
+      sta.textContent = t('account.err_missing_fields');
       sta.style.color = 'var(--danger)';
     }
     return;
   }
 
-  if (btn) { btn.disabled = true; btn.textContent = 'Bağlanıyor…'; }
+  if (btn) { btn.disabled = true; btn.textContent = t('account.btn_connecting'); }
   if (sta) sta.textContent = '';
 
   const res = await pywebview.api.account_login(key, sid);
-  if (btn) { btn.disabled = false; btn.textContent = 'Bağlan'; }
+  if (btn) { btn.disabled = false; btn.textContent = t('account.btn_connect'); }
 
   if (res.ok) {
     if (sta) sta.textContent = '';
-    toast('success', 'Hesap Bağlandı', res.name);
+    toast('success', t('account.toast_connected'), res.name);
   } else {
     if (sta) {
-      sta.textContent = res.error || 'Bağlanılamadı.';
+      sta.textContent = res.error || t('settings.toast_save_err');
       sta.style.color = 'var(--danger)';
     }
   }
 }
 
 async function accountLogout() {
-  const ok = await confirm2('Oturumu Kapat', 'Steam hesap bağlantısı kaldırılacak.');
+  const ok = await confirm2(t('account.confirm_logout_title'), t('account.confirm_logout_msg'));
   if (!ok) return;
   await pywebview.api.account_logout();
-  toast('info', 'Çıkış Yapıldı', '');
+  toast('info', t('account.toast_logged_out'), '');
 }
 
 async function accountRefreshLibrary() {
-  toast('info', 'Yenileniyor…', 'Steam kütüphanesi güncelleniyor.');
+  toast('info', t('toast.restarting'), t('account.toast_refreshing'));
   const res = await pywebview.api.account_get_owned_games(true);
-  if (!res.ok) toast('error', 'Hata', res.error);
+  if (!res.ok) toast('error', t('toast.error'), res.error);
 }

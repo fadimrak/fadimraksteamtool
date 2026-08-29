@@ -26,7 +26,7 @@ function renderLibrary(games) {
   if (!grid) return;
 
   grid.innerHTML = '';
-  if (count) count.textContent = `${games.length} oyun`;
+  if (count) count.textContent = t('library.count', { count: games ? games.length : 0 });
 
   if (!games || !games.length) {
     if (empty) empty.classList.remove('hidden');
@@ -54,7 +54,7 @@ function renderLibrary(games) {
       <div class="card-sub">
         <span>App ID: ${esc(g.app_id)}</span>
         <button class="btn btn-ghost btn-sm" style="padding:2px 6px;font-size:10px;"
-                onclick="event.stopPropagation();confirmRemove('${esc(g.app_id)}')">Kaldır</button>
+                onclick="event.stopPropagation();confirmRemove('${esc(g.app_id)}')">${t('library.remove_btn')}</button>
       </div>`;
     card.appendChild(info);
 
@@ -85,15 +85,15 @@ function filterLibrary(query) {
 async function confirmRemove(appId) {
   const game = installedGames.find(g => String(g.app_id) === String(appId));
   const name = game ? game.name : `App ${appId}`;
-  const ok = await confirm2('Oyunu Kaldır', `"${name}" Steam kütüphanenizden ve yerel yapılandırmadan kaldırılacak.`);
+  const ok = await confirm2(t('library.confirm_remove_title'), t('library.confirm_remove_msg', { name }));
   if (!ok) return;
 
   const res = await pywebview.api.remove_game(appId);
   if (res.ok) {
-    toast('info', 'Oyun Kaldırıldı', name);
+    toast('info', t('library.toast_removed'), name);
     installedGames = installedGames.filter(g => String(g.app_id) !== String(appId));
     renderLibrary(installedGames);
   } else {
-    toast('error', 'Hata', res.error || 'Kaldırılamadı.');
+    toast('error', t('toast.error'), res.error || t('settings.toast_save_err'));
   }
 }

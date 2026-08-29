@@ -3,16 +3,13 @@
  */
 
 async function settingsInit() {
-  // Tray butonunu yalnızca pystray mevcutsa göster (ayarlar sayfası + sidebar)
   try {
     const trayRes = await pywebview.api.tray_is_available();
     const available = trayRes.available;
 
-    // Ayarlar sayfasındaki buton
     const trayWrap = document.getElementById('tray-btn-wrap');
     if (trayWrap) trayWrap.style.display = available ? '' : 'none';
 
-    // Sidebar butonu
     const traySidebar = document.getElementById('tray-sidebar-btn');
     if (traySidebar) traySidebar.style.display = available ? '' : 'none';
   } catch (e) {}
@@ -29,10 +26,10 @@ async function autoDetect() {
   const res = await pywebview.api.detect_steam_path();
   if (res && res.path) {
     document.getElementById('steam-path').value = res.path;
-    toast('success', 'Bulundu', res.path);
+    toast('success', t('settings.toast_detected'), res.path);
     checkDllStatus();
   } else {
-    toast('warn', 'Bulunamadı', 'Steam otomatik tespit edilemedi.');
+    toast('warn', t('toast.warn'), t('settings.toast_not_detected'));
   }
 }
 
@@ -40,43 +37,43 @@ async function savePath() {
   const path = document.getElementById('steam-path').value.trim();
   const res  = await pywebview.api.save_settings(path);
   if (res && res.ok) {
-    toast('success', 'Kaydedildi', path);
+    toast('success', t('settings.toast_saved'), path);
     checkDllStatus();
   } else {
-    toast('error', 'Hata', 'Kaydedilemedi.');
+    toast('error', t('toast.error'), t('settings.toast_save_err'));
   }
 }
 
 async function restartSteam() {
-  toast('info', 'Yeniden Başlatılıyor…', 'Steam kapatılıp tekrar açılıyor.');
+  toast('info', t('toast.restarting'), t('settings.toast_restarting'));
   const res = await pywebview.api.restart_steam();
   if (res && res.ok) {
-    toast('success', 'Başarılı', 'Steam yeniden başlatıldı.');
+    toast('success', t('toast.success'), t('settings.toast_restarted'));
   } else {
-    toast('error', 'Hata', res.error || 'Steam başlatılamadı.');
+    toast('error', t('toast.error'), res.error || t('settings.toast_save_err'));
   }
 }
 
 async function downloadDll() {
-  toast('info', 'İndiriliyor…', 'DLL dosyaları yükleniyor.');
+  toast('info', t('toast.downloading'), t('settings.toast_downloading_dll'));
   const res = await pywebview.api.download_hid_dll();
   if (res && res.ok) {
-    toast('success', 'Tamamlandı', 'DLL dosyaları kuruldu.');
+    toast('success', t('toast.completed'), t('settings.toast_dll_installed'));
     checkDllStatus();
   } else {
-    toast('error', 'Hata', res.error || 'DLL indirilemedi.');
+    toast('error', t('toast.error'), res.error || t('settings.toast_save_err'));
   }
 }
 
 async function removeDll() {
-  const ok = await confirm2('DLL Kaldır', 'Crack DLL dosyaları Steam dizininden kaldırılacak.');
+  const ok = await confirm2(t('settings.confirm_remove_dll_title'), t('settings.confirm_remove_dll_msg'));
   if (!ok) return;
   const res = await pywebview.api.remove_hid_dll();
   if (res && res.ok) {
-    toast('info', 'Kaldırıldı', `${res.removed} DLL dosyası silindi.`);
+    toast('info', t('toast.removed'), t('settings.toast_dll_removed', { count: res.removed }));
     checkDllStatus();
   } else {
-    toast('error', 'Hata', res.error || 'DLL kaldırılamadı.');
+    toast('error', t('toast.error'), res.error || t('settings.toast_save_err'));
   }
 }
 
@@ -88,10 +85,10 @@ async function checkDllStatus() {
     if (dot && text) {
       if (res && res.installed) {
         dot.className = 'dll-status-dot active';
-        text.textContent = res.msg || 'DLL Aktif';
+        text.textContent = t('nav.dll_active');
       } else {
         dot.className = 'dll-status-dot';
-        text.textContent = res.msg || 'DLL Eksik';
+        text.textContent = res && res.msg === 'Steam Yok' ? t('nav.steam_missing') : t('nav.dll_missing');
       }
     }
   } catch (e) {}

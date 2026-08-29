@@ -1,126 +1,129 @@
 # Fadimrak Steam Tool
 
-Fadimrak Steam Tool, Steam istemcisi icin gelistirilmis kapsamli bir kutuphane, basarim, DLC ve hesap yonetim aracidir. Python tabanli asenkron arka plan mimarisi ve PyWebView destekli modern arayuzu ile kullanicilara hizli ve moduler bir deneyim sunar.
+Fadimrak Steam Tool is a comprehensive library, achievement, DLC, and account management utility developed for the Steam client. Built with a Python-based asynchronous backend architecture and a PyWebView-powered modern responsive user interface, it provides users with a fast, lightweight, and modular experience.
 
 ---
 
-## Ozellikler
+## Features
 
-- **Oyun ve Manifest Yonetimi:** ManifestHub kaynaklari uzerinden secilen oyunlarin depot ve manifest yapilandirmalarini otomatik olarak cozumler ve kutuphaneye entegre eder.
-- **DLC Unlocker Entegrasyonu:** SmokeAPI, ScreamAPI ve Koaloader yapilandirmalarini otomatik olarak algilar, oyun dizinlerine uygular ve yonetir.
-- **Steam Basarim Yoneticisi (SAM):** `steam_api64.dll` uzerinden Steamworks API ile dogrudan iletisim kurarak oyun basarimlarini ve istatistiklerini goruntuleme, tek tek veya toplu olarak acma/kilitleme imkani saglar.
-- **Kart ve Saat Kasici (Idle Farmer):** Arka planda calisan izole alt surecler (subprocess) uzerinden oyunlari calistirmadan takas karti dusurme ve oyun suresi kasma islemlerini yonetir. Sistem tepsisi (System Tray) destegiyle arka planda sessizce calisabilir.
-- **Online-Fix Entegrasyonu:** Desteklenen oyunlar icin multiplayer ve network bypass yamalarini otomatik indirip oyun dizinlerine konumlandirir.
-- **Coklu Hesap Yoneticisi:** Sistemde kayitli Steam hesaplari arasinda hizli gecis yapilmasini saglar.
-- **Modern Web Arayuzu:** Chromium / Edge-WebView2 motoru uzerinde calisan, donanim hizlandirmali ve asenkron IPC koprusu ile iletisim kuran responsive UI.
-
----
-
-## Mimari ve Calisma Mantigi
-
-Uygulama iki ana katmandan olusur:
-
-1. **Frontend (Arayuz):** PyWebView uzerinde calisan HTML, CSS ve JavaScript tabanli arayuz. Backend ile asenkron REST/JS API koprusu (`ui_web/bridge.py`) uzerinden iletisim kurar.
-2. **Backend & Core Motoru:**
-   - `core/installer.py`: Manifest indirme, arsiv acma ve dosya yonetimi.
-   - `core/achievement_manager.py`: Steamworks API entegrasyonu ile basarim yonetimi.
-   - `core/idle_farmer.py`: Ctypes ve subprocess tabanli idle farming motoru.
-   - `core/dlc_unlocker.py`: SmokeAPI / ScreamAPI konfigurasyon uretimi.
-   - `core/onlinefix.py`: Online fix arsiv yonetimi ve dosya patchleme.
-   - `core/steam_account.py`: VDF ve registry tabanli hesap tespit/degistirme modulu.
-   - `core/tray_manager.py`: Windows System Tray bildirim ve arka plan calisma yoneticisi.
+- **Game & Manifest Management:** Automatically resolves depot and manifest configurations for selected games via ManifestHub sources and integrates them directly into your local Steam library.
+- **DLC Unlocker Integration:** Automatically detects, configures, and manages DLC unlockers (SmokeAPI, ScreamAPI, and Koaloader) across your game directories.
+- **Steam Achievement Manager (SAM):** Directly interfaces with the Steamworks API via `steam_api64.dll` to inspect game achievements and statistics, allowing users to unlock or lock achievements individually or in bulk.
+- **Card & Playtime Farmer (Idle Farmer):** Farms Steam trading cards and boosts playtime in the background without needing to launch the game binaries, using isolated background subprocesses. Includes full Windows System Tray integration for silent background operation.
+- **Online-Fix Integration:** Automatically extracts and deploys multiplayer/network bypass patches for supported games into target game directories.
+- **Multi-Account Manager:** Enables fast switching and session management between registered Steam accounts on the system.
+- **Bilingual Interface (English & Turkish):** Full localization support with seamless runtime switching between English and Turkish across all pages, modals, notifications, and menus.
+- **Modern Web Interface:** Hardware-accelerated, responsive UI running on Chromium / Edge-WebView2 engine with asynchronous Python-to-JS IPC bridge.
 
 ---
 
-## Kurulum ve Kaynak Koddan Calistirma
+## Architecture & How It Works
 
-### Gereksinimler
+The application is structured into two main layers:
 
-- Windows 10 veya Windows 11 (x64)
-- Python 3.10 veya daha yeni bir surum
-- Steam istemcisi
+1. **Frontend (UI):** Modern HTML5, CSS3, and JavaScript interface rendered inside PyWebView. Communicates with Python services through an asynchronous IPC bridge (`ui_web/bridge.py`).
+2. **Backend & Core Engine:**
+   - `core/installer.py`: Manifest downloads, archive extraction, and Steam config file management.
+   - `core/achievement_manager.py`: Steamworks API integration and achievement state management.
+   - `core/idle_farmer.py`: Ctypes and subprocess-based idle farming engine.
+   - `core/dlc_unlocker.py`: SmokeAPI / ScreamAPI configuration generator.
+   - `core/onlinefix.py`: Online-fix archive extraction and patch deployment.
+   - `core/steam_account.py`: VDF and registry-based Steam account detection and switching module.
+   - `core/tray_manager.py`: Windows System Tray notifications and background runner.
 
-### Adimlar
+---
 
-1. Depoyu klonlayin:
+## Installation & Running from Source
+
+### Prerequisites
+
+- Windows 10 or Windows 11 (x64)
+- Python 3.10 or newer
+- Steam Client installed
+
+### Steps
+
+1. Clone the repository:
 ```bash
 git clone https://github.com/fadimrak/fadimraksteamtool.git
 cd fadimraksteamtool
 ```
 
-2. Gerekli Python paketlerini yukleyin:
+2. Install the required Python dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Uygulamayi baslatin:
+3. Run the application:
 ```bash
 python main.py
 ```
 
 ---
 
-## Derleme (Build & Packaging)
+## Building & Packaging
 
-Projeyi tek bir bagimsiz `.exe` dosyasina veya Inno Setup kurulum paketine donusturmek icin hazir derleme scripti bulunmaktadir.
+A build script is provided to compile the project into a standalone `.exe` or an Inno Setup installer package.
 
-### Gereksinimler
+### Prerequisites for Building
 
 - `pyinstaller`
-- Inno Setup 6 (Opsiyonel, Setup dosyasi olusturmak icin)
+- Inno Setup 6 (Optional, required to generate the setup installer)
 
-### Derleme Islemi
+### Build Process
 
-`build.bat` dosyasini calistirarak otomatik derleme surecini baslatabilirsiniz:
+Run the `build.bat` script to start the automated build process:
 
 ```bat
 build.bat
 ```
 
-Script su adimlari otomatik olarak gerceklestirir:
-1. Gerekli bagimliliklari kontrol eder.
-2. `fadimrak.spec` dosyasini kullanarak `dist/FadimrakSteamTool.exe` ciktisini olusturur.
-3. Sistemde Inno Setup kuruluysa `installer.iss` dosyasini derleyerek `output/` dizininde kurulum paketini hazirlar.
+The script performs the following steps automatically:
+1. Verifies required dependencies.
+2. Uses `fadimrak.spec` to create the standalone executable at `dist/FadimrakSteamTool.exe`.
+3. If Inno Setup is detected on the system, compiles `installer.iss` to produce the installer package in the `output/` directory.
 
 ---
 
-## Proje Yapisi
+## Project Structure
 
 ```text
 fadimraksteamtool/
 ├── core/
-│   ├── achievement_manager.py  # Basarim yonetimi ve Steamworks entegrasyonu
-│   ├── dlc_unlocker.py         # DLC unlocker yapilandirma modulu
-│   ├── game_manager.py         # Yuklu oyunlarin kayit ve durumu
-│   ├── idle_farmer.py          # Kart dusurme ve sure kasma motoru
-│   ├── installer.py            # Manifest indirme ve kurulum servisi
-│   ├── onlinefix.py            # Multiplayer yama entegrasyonu
-│   ├── steam_account.py        # Steam hesap yoneticisi
-│   ├── steam_utils.py          # Steam dizin ve surec araclari
-│   └── tray_manager.py         # Sistem tepsisi (Tray) yonetimi
+│   ├── achievement_manager.py  # Achievement management and Steamworks integration
+│   ├── dlc_unlocker.py         # DLC unlocker configuration module
+│   ├── game_manager.py         # Installed games tracking and status
+│   ├── idle_farmer.py          # Card drop and playtime farming engine
+│   ├── installer.py            # Manifest downloading and installation service
+│   ├── onlinefix.py            # Multiplayer patch integration
+│   ├── steam_account.py        # Steam account manager
+│   ├── steam_utils.py          # Steam directory and process utilities
+│   └── tray_manager.py         # System Tray management and background notifications
 ├── ui_web/
-│   ├── bridge.py               # Python - JS haberlesme koprusu
-│   ├── window.py               # PyWebView pencere yapilandirmasi
-│   └── static/                 # Frontend arayuz dosyalari (HTML/CSS/JS/Assets)
-├── build.bat                   # Otomatik derleme scripti
-├── config.py                   # Uygulama genel yapilandirmasi
-├── fadimrak.spec               # PyInstaller spec tanimi
-├── installer.iss               # Inno Setup yukleyici tanimi
-├── main.py                     # Uygulama giris noktasi
-├── requirements.txt            # Python bagimliliklari
-├── steam_api.py                # Steam Web API ve liste yoneticisi
-├── steam_api64.dll             # Steamworks 64-bit API kutuphanesi
-└── verison                     # Surum bilgisi
+│   ├── bridge.py               # Python <-> JS IPC communication bridge
+│   ├── window.py               # PyWebView window configuration
+│   └── static/                 # Frontend assets (HTML, CSS, JS, Images)
+│       ├── css/                # Stylesheets
+│       └── js/                 # Modular frontend logic & i18n localization
+├── build.bat                   # Automated build and packaging script
+├── config.py                   # Global application configuration
+├── fadimrak.spec               # PyInstaller build specification
+├── installer.iss               # Inno Setup installer script
+├── main.py                     # Application entry point
+├── requirements.txt            # Python dependencies
+├── steam_api.py                # Steam Web API and app list manager
+├── steam_api64.dll             # Steamworks 64-bit API library
+└── verison                     # Version information
 ```
 
 ---
 
-## Sorumluluk Reddi (Disclaimer)
+## Disclaimer
 
-Bu yazilim yalnizca egitim, tersine muhendislik analizleri, API calisma prensiplerinin incelenmesi ve guvenlik arastirmalari amaciyla gelistirilmistir. Yazilimin amaci disinda kullanimindan kaynaklanabilecek hesap kisitlamalari (VAC/Game Ban) veya diger sorumluluklar kullaniciya aittir. Orijinal oyun ve yazilim gelistiricilerini desteklemek icin lisansli urunleri tercih ediniz.
+This software is developed strictly for educational purposes, reverse engineering analysis, API examination, and security research. Any account restrictions (such as VAC or Game Bans) or other consequences resulting from the misuse of this tool are entirely the responsibility of the user. Please purchase licensed products to support original game and software developers.
 
 ---
 
-## Lisans
+## License
 
-Bu proje GNU General Public License v3.0 (GPL-3.0) kapsaminda lisanslanmistir. Ayrintilar icin `LICENSE` dosyasini inceleyebilirsiniz.
+This project is licensed under the GNU General Public License v3.0 (GPL-3.0). See the `LICENSE` file for details.

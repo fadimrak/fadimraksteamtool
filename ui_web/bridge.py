@@ -39,6 +39,7 @@ class API:
         tray.set_idle_farmer(idle_farmer)
         tray.set_quit_callback(self._on_quit)
         tray.set_stop_idle_callback(self.idle_stop_all)
+        tray.set_language(self._settings.get("lang", "tr"))
         self._tray = tray
         tray.start()
 
@@ -183,8 +184,18 @@ class API:
         for k in ("steam_path", "lang", "steam_api_key", "steam_id"):
             if k in data:
                 self._settings[k] = data[k]
+        if "lang" in data and self._tray:
+            self._tray.set_language(data["lang"])
         self._save_settings()
         return {"ok": True}
+
+    def set_language(self, lang: str):
+        lang = "en" if str(lang).lower() == "en" else "tr"
+        self._settings["lang"] = lang
+        self._save_settings()
+        if self._tray:
+            self._tray.set_language(lang)
+        return {"ok": True, "lang": lang}
 
     def detect_steam_path(self):
         path = steam_utils.detect_steam_path()

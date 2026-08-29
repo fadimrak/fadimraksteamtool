@@ -26,7 +26,7 @@ async function doSearch(q) {
     if (loader) loader.classList.remove('hidden');
     const pop = await pywebview.api.get_popular_games();
     if (loader) loader.classList.add('hidden');
-    if (count) count.textContent = 'Popüler Oyunlar';
+    if (count) count.textContent = t('add.popular_games');
     renderSearchResults(pop || []);
     return;
   }
@@ -34,7 +34,7 @@ async function doSearch(q) {
   if (loader) loader.classList.remove('hidden');
   const results = await pywebview.api.search_games(q);
   if (loader) loader.classList.add('hidden');
-  if (count) count.textContent = `${results.length} sonuç`;
+  if (count) count.textContent = t('add.results_count', { count: results.length });
   renderSearchResults(results || []);
 }
 
@@ -44,7 +44,7 @@ function renderSearchResults(list) {
   grid.innerHTML = '';
 
   if (!list.length) {
-    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon"></div><div>Sonuç bulunamadı.</div></div>`;
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon"></div><div>${t('add.no_results')}</div></div>`;
     return;
   }
 
@@ -56,7 +56,7 @@ function renderSearchResults(list) {
 
     const isInstalled = installedGames.some(ig => String(ig.app_id) === aid);
     const btnCls = isInstalled ? 'btn btn-ghost btn-sm' : 'btn btn-primary btn-sm';
-    const btnTxt = isInstalled ? 'Yüklendi' : 'İndir';
+    const btnTxt = isInstalled ? t('add.btn_installed') : t('add.btn_download');
 
     const img = document.createElement('img');
     img.className = 'card-cover';
@@ -82,16 +82,16 @@ function renderSearchResults(list) {
 
 async function addGameById(appId) {
   const aid = String(appId).trim();
-  if (!aid) { toast('warn', 'Uyarı', 'Lütfen geçerli bir App ID girin.'); return; }
+  if (!aid) { toast('warn', t('toast.warn'), t('add.warn_invalid_appid')); return; }
   const btn = document.querySelector(`#result-${aid} .install-btn`);
   if (btn) {
     btn.disabled = true;
-    btn.textContent = 'İndiriliyor…';
+    btn.textContent = t('add.btn_downloading');
   }
   const res = await pywebview.api.add_game_by_id(aid);
   if (!res.ok) {
-    toast('error', 'Hata', res.error || 'Oyun eklenemedi.');
-    if (btn) { btn.disabled = false; btn.textContent = 'İndir'; }
+    toast('error', t('toast.error'), res.error || t('add.toast_install_err'));
+    if (btn) { btn.disabled = false; btn.textContent = t('add.btn_download'); }
   }
 }
 
@@ -100,10 +100,10 @@ async function browseFiles() {
   if (files && files.length) {
     const res = await pywebview.api.add_game_files(files);
     if (res.ok) {
-      toast('success', 'Dosyalar Yüklendi', `${res.lua} Lua, ${res.manifests} Manifest eklendi.`);
+      toast('success', t('add.toast_files_loaded'), t('add.toast_files_count', { lua: res.lua, manifests: res.manifests }));
       loadLibrary();
     } else {
-      toast('error', 'Hata', res.error || 'Dosyalar eklenemedi.');
+      toast('error', t('toast.error'), res.error || t('add.toast_install_err'));
     }
   }
 }
@@ -132,10 +132,10 @@ function setupDropZone() {
 
     const res = await pywebview.api.add_dropped_files(fileList);
     if (res.ok) {
-      toast('success', 'Yüklendi', `${res.lua} Lua, ${res.manifests} Manifest kuruldu.`);
+      toast('success', t('add.toast_installed'), t('add.toast_files_count', { lua: res.lua, manifests: res.manifests }));
       loadLibrary();
     } else {
-      toast('error', 'Hata', res.error || 'Yüklenemedi.');
+      toast('error', t('toast.error'), res.error || t('add.toast_install_err'));
     }
   });
 }

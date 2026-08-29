@@ -16,7 +16,7 @@ async function samInit() {
     _samInited = true;
   }
 
-  // Hesap bağlı değilse login duvarı göster
+  // If not logged in, show login wall
   if (!_accountLoggedIn) {
     _samShowLoginWall();
     return;
@@ -61,14 +61,14 @@ function _samRenderGameGrid() {
   let list = _samAllGames;
   if (q) list = list.filter(g => (g.name || '').toLowerCase().includes(q) || String(g.appid).includes(q));
 
-  if (count) count.textContent = `${list.length} oyun`;
+  if (count) count.textContent = t('sam.game_count', { count: list.length });
 
   if (!list.length) {
     grid.innerHTML = `
       <div class="empty-state" style="grid-column:1/-1;">
         <div class="empty-icon"></div>
-        <div style="font-size:14px;font-weight:700;margin-bottom:4px;">Başarımı olan oyun bulunamadı</div>
-        <div style="font-size:11px;color:var(--muted);">Sadece başarımı olan oyunlar bu listede listelenir.</div>
+        <div style="font-size:14px;font-weight:700;margin-bottom:4px;">${t('sam.no_games_title')}</div>
+        <div style="font-size:11px;color:var(--muted);">${t('sam.no_games_desc')}</div>
       </div>`;
     return;
   }
@@ -94,7 +94,7 @@ function _samRenderGameGrid() {
       <div class="card-sub">
         <span>App ID: ${esc(aid)}</span>
         <button class="btn btn-primary btn-sm" style="padding:2px 8px;font-size:10px;"
-                onclick="event.stopPropagation();samSelectGame('${esc(aid)}','${esc(g.name)}')">Başarımlar →</button>
+                onclick="event.stopPropagation();samSelectGame('${esc(aid)}','${esc(g.name)}')">${t('sam.btn_achievements')}</button>
       </div>`;
     card.appendChild(info);
 
@@ -144,7 +144,7 @@ function _samShowLoading() {
     content.innerHTML = `
       <div class="empty-state">
         <div class="spin" style="width:32px;height:32px;margin-bottom:14px;"></div>
-        <div>Başarımlar yükleniyor…</div>
+        <div>${t('sam.loading_text')}</div>
       </div>`;
   }
 }
@@ -156,7 +156,7 @@ function _samShowError(msg) {
       <div class="empty-state">
         <div class="empty-icon" style="color:var(--danger)">X</div>
         <div style="color:var(--danger);font-size:13px;font-weight:700;">${esc(msg)}</div>
-        <div style="margin-top:8px;font-size:11px;color:var(--muted);">Bu oyunun başarımı olmayabilir veya Steam API yanıt vermedi.</div>
+        <div style="margin-top:8px;font-size:11px;color:var(--muted);">${t('sam.error_desc')}</div>
       </div>`;
   }
 }
@@ -214,7 +214,7 @@ function _samRenderList() {
   }
 
   if (!list.length) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-icon"></div><div>Sonuç bulunamadı.</div></div>`;
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon"></div><div>${t('sam.no_ach_found')}</div></div>`;
     return;
   }
 
@@ -234,20 +234,20 @@ function _samMakeRow(a) {
   const iconSrc  = isUnl ? (a.icon || a.icon_gray || '') : (a.icon_gray || a.icon || '');
   const iconCls  = !isUnl ? 'sam-ach-icon gray' : 'sam-ach-icon';
   const badgeCls = a.achieved ? 'sam-badge-unlocked' : (a.lua_unlocked ? 'sam-badge-lua' : 'sam-badge-locked');
-  const badgeTxt = a.achieved ? 'Açık' : (a.lua_unlocked ? 'Açık (Lua)' : 'Kilitli');
-  const pct      = a.global_percent > 0 ? `%${a.global_percent.toFixed(1)} oyuncu` : '';
+  const badgeTxt = a.achieved ? t('sam.badge_unlocked') : (a.lua_unlocked ? t('sam.badge_lua') : t('sam.badge_locked'));
+  const pct      = a.global_percent > 0 ? t('sam.global_pct', { pct: a.global_percent.toFixed(1) }) : '';
 
   div.innerHTML = `
     <img class="${iconCls}" src="${esc(iconSrc)}" alt="" onerror="this.style.opacity='.2'">
     <div class="sam-ach-info">
       <div class="sam-ach-name" title="${esc(a.display_name)}">${esc(a.display_name)}</div>
-      <div class="sam-ach-desc">${esc(a.description || (a.hidden ? 'Gizli başarım' : ''))}</div>
+      <div class="sam-ach-desc">${esc(a.description || (a.hidden ? t('sam.hidden_achievement') : ''))}</div>
     </div>
     <div class="sam-ach-pct">${esc(pct)}</div>
     <span class="sam-ach-badge ${badgeCls}">${badgeTxt}</span>
     <div class="sam-ach-actions">
-      ${!isUnl ? `<button class="sam-ach-btn unlock" onclick="samUnlockOne('${esc(a.name)}',this)">Kilidi Kaldır</button>` : ''}
-      ${isUnl  ? `<button class="sam-ach-btn lock-btn" onclick="samLockOne('${esc(a.name)}',this)">Kilitle</button>` : ''}
+      ${!isUnl ? `<button class="sam-ach-btn unlock" onclick="samUnlockOne('${esc(a.name)}',this)">${t('sam.btn_unlock')}</button>` : ''}
+      ${isUnl  ? `<button class="sam-ach-btn lock-btn" onclick="samLockOne('${esc(a.name)}',this)">${t('sam.btn_lock')}</button>` : ''}
     </div>`;
   return div;
 }
@@ -273,13 +273,13 @@ function _samSetRowState(name, state) {
 
     if (state === 'unlocked' || state === 'lua') {
       row.classList.add('unlocked');
-      if (badge) { badge.className = 'sam-ach-badge sam-badge-unlocked'; badge.textContent = 'Açık'; }
+      if (badge) { badge.className = 'sam-ach-badge sam-badge-unlocked'; badge.textContent = t('sam.badge_unlocked'); }
       if (icon)  icon.classList.remove('gray');
-      if (acts)  acts.innerHTML = `<button class="sam-ach-btn lock-btn" onclick="samLockOne('${esc(name)}',this)">Kilitle</button>`;
+      if (acts)  acts.innerHTML = `<button class="sam-ach-btn lock-btn" onclick="samLockOne('${esc(name)}',this)">${t('sam.btn_lock')}</button>`;
     } else {
-      if (badge) { badge.className = 'sam-ach-badge sam-badge-locked'; badge.textContent = 'Kilitli'; }
+      if (badge) { badge.className = 'sam-ach-badge sam-badge-locked'; badge.textContent = t('sam.badge_locked'); }
       if (icon)  icon.classList.add('gray');
-      if (acts)  acts.innerHTML = `<button class="sam-ach-btn unlock" onclick="samUnlockOne('${esc(name)}',this)">Kilidi Kaldır</button>`;
+      if (acts)  acts.innerHTML = `<button class="sam-ach-btn unlock" onclick="samUnlockOne('${esc(name)}',this)">${t('sam.btn_unlock')}</button>`;
     }
   }
 
@@ -292,10 +292,10 @@ async function samUnlockOne(name, btn) {
   const res = await pywebview.api.sam_unlock(_samAppId, [name]);
   if (res && res.ok) {
     _samSetRowState(name, 'unlocked');
-    toast('success', 'Başarım Açıldı', name);
+    toast('success', t('sam.toast_unlocked'), name);
   } else {
-    toast('error', 'Hata', res ? res.error : 'Açılamadı.');
-    if (btn) { btn.disabled = false; btn.textContent = 'Kilidi Kaldır'; }
+    toast('error', t('toast.error'), res ? res.error : t('settings.toast_save_err'));
+    if (btn) { btn.disabled = false; btn.textContent = t('sam.btn_unlock'); }
   }
 }
 
@@ -305,10 +305,10 @@ async function samLockOne(name, btn) {
   const res = await pywebview.api.sam_lock(_samAppId, [name]);
   if (res && res.ok) {
     _samSetRowState(name, 'locked');
-    toast('info', 'Başarım Kilitlendi', name);
+    toast('info', t('sam.toast_locked'), name);
   } else {
-    toast('error', 'Hata', res ? res.error : 'Kilitlenemedi.');
-    if (btn) { btn.disabled = false; btn.textContent = 'Kilitle'; }
+    toast('error', t('toast.error'), res ? res.error : t('settings.toast_save_err'));
+    if (btn) { btn.disabled = false; btn.textContent = t('sam.btn_lock'); }
   }
 }
 
@@ -316,25 +316,25 @@ async function samUnlockAll() {
   if (!_samAppId) return;
   const names = _samAchs.map(a => a.name).filter(Boolean);
   if (!names.length) {
-    toast('warn', 'Uyarı', 'Açılacak başarım bulunamadı.');
+    toast('warn', t('toast.warn'), t('sam.no_ach_found'));
     return;
   }
 
-  const ok = await confirm2('Tüm Başarımları Aç', `Bu oyuna ait ${names.length} başarımın tümü açılacak. Onaylıyor musunuz?`);
+  const ok = await confirm2(t('sam.confirm_unlock_all_title'), t('sam.confirm_unlock_all_msg', { count: names.length }));
   if (!ok) return;
 
   const btn = document.getElementById('sam-unlock-all-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Açılıyor…'; }
+  if (btn) { btn.disabled = true; btn.textContent = t('sam.btn_unlocking'); }
 
   const res = await pywebview.api.sam_unlock(_samAppId, names);
-  if (btn) { btn.disabled = false; btn.textContent = 'Tümünü Aç'; }
+  if (btn) { btn.disabled = false; btn.textContent = t('sam.btn_unlock_all'); }
 
   if (res && res.ok) {
     names.forEach(n => _samSetRowState(n, 'unlocked'));
     _samRenderList();
-    toast('success', 'Tümü Açıldı', `${names.length} başarım başarıyla açıldı.`);
+    toast('success', t('sam.toast_all_unlocked'), t('sam.toast_all_unlocked_msg', { count: names.length }));
   } else {
-    toast('error', 'Hata', res ? res.error : 'Açılamadı.');
+    toast('error', t('toast.error'), res ? res.error : t('settings.toast_save_err'));
   }
 }
 
@@ -343,21 +343,21 @@ async function samLockAll() {
   const names = _samAchs.map(a => a.name).filter(Boolean);
   if (!names.length) return;
 
-  const ok = await confirm2('Tüm Başarımları Kilitle', `Bu oyuna ait tüm başarımlar kilitlenecek. Onaylıyor musunuz?`);
+  const ok = await confirm2(t('sam.confirm_lock_all_title'), t('sam.confirm_lock_all_msg', { count: names.length }));
   if (!ok) return;
 
   const btn = document.getElementById('sam-lock-all-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Kilitleniyor…'; }
+  if (btn) { btn.disabled = true; btn.textContent = t('sam.btn_locking'); }
 
   const res = await pywebview.api.sam_lock(_samAppId, names);
-  if (btn) { btn.disabled = false; btn.textContent = 'Tümünü Kilitle'; }
+  if (btn) { btn.disabled = false; btn.textContent = t('sam.btn_lock_all'); }
 
   if (res && res.ok) {
     names.forEach(n => _samSetRowState(n, 'locked'));
     _samRenderList();
-    toast('info', 'Tümü Kilitlendi', `${names.length} başarım kilitlendi.`);
+    toast('info', t('sam.toast_all_locked'), t('sam.toast_all_locked_msg', { count: names.length }));
   } else {
-    toast('error', 'Hata', res ? res.error : 'Kilitlenemedi.');
+    toast('error', t('toast.error'), res ? res.error : t('settings.toast_save_err'));
   }
 }
 

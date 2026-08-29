@@ -58,14 +58,14 @@ async function ofInstall() {
 
   if (btn) {
     btn.disabled    = true;
-    btn.textContent = 'Kuruluyor…';
+    btn.textContent = t('onlinefix.btn_installing');
   }
   if (bar) {
     bar.style.width = '0%';
     bar.style.background = 'var(--success)';
   }
   if (label) {
-    label.textContent = 'Başlatılıyor…';
+    label.textContent = t('onlinefix.label_starting');
     label.style.color = 'var(--muted)';
   }
   if (section) section.classList.remove('hidden');
@@ -73,13 +73,13 @@ async function ofInstall() {
   const res = await pywebview.api.install_online_fix(ofArchivePath, ofGameDir);
   if (!res.ok) {
     if (label) {
-      label.textContent = 'Hata: ' + res.error;
+      label.textContent = `${t('toast.error')}: ${res.error}`;
       label.style.color = 'var(--danger)';
     }
     if (btn) {
-      btn.textContent = 'Fix\'i Kur';
+      btn.textContent = t('onlinefix.btn_install');
       btn.disabled    = false;
     }
-    toast('error', 'Fix Hatası', res.error);
+    toast('error', t('onlinefix.toast_err'), res.error);
   }
 }

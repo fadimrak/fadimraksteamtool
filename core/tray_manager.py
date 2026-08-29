@@ -77,6 +77,7 @@ class TrayManager:
         self._running      = False
         self._on_quit_cb   = None   # gerçek çıkış callback'i
         self._stop_idle_cb = None   # idle_stop_all bridge callback'i
+        self._lang         = "tr"
 
     def set_window(self, window):
         self._window = window
@@ -91,6 +92,11 @@ class TrayManager:
         """bridge.idle_stop_all'ı bağlamak için — UI'a event push eder."""
         self._stop_idle_cb = cb
 
+    def set_language(self, lang: str):
+        """Menü dilini günceller ('tr' veya 'en')."""
+        self._lang = "en" if str(lang).lower() == "en" else "tr"
+        self.update_menu()
+
     @property
     def available(self) -> bool:
         return _tray_available
@@ -100,6 +106,7 @@ class TrayManager:
     def _build_menu(self):
         """Dinamik tray menüsü — aktif kasılan oyunlar, kontroller ve çıkış."""
         items = []
+        is_en = self._lang == "en"
 
         # Başlık (tıklanınca pencereyi gösterir)
         items.append(pystray.MenuItem(
@@ -116,7 +123,8 @@ class TrayManager:
                 farmer  = self._idle_farmer.get_farmer()
                 running = farmer.get_status()
                 if running:
-                    items.append(pystray.MenuItem("── Aktif Kasma ──", None, enabled=False))
+                    header_label = "── Active Idling ──" if is_en else "── Aktif Kasma ──"
+                    items.append(pystray.MenuItem(header_label, None, enabled=False))
                     for entry in running[:8]:
                         elapsed = self._idle_farmer.format_elapsed(entry["elapsed_seconds"])
                         name    = entry["name"][:28]
@@ -124,8 +132,9 @@ class TrayManager:
                         items.append(pystray.MenuItem(label, None, enabled=False))
                     items.append(pystray.Menu.SEPARATOR)
                     # Tümünü durdur butonu (yalnızca aktif kasma varsa)
+                    stop_label = "Stop Card & Time Idle" if is_en else "Kart & Saat Kasımı Durdur"
                     items.append(pystray.MenuItem(
-                        "Kart & Saat Kasımı Durdur",
+                        stop_label,
                         self._stop_all_idle,
                     ))
                     items.append(pystray.Menu.SEPARATOR)
@@ -133,12 +142,16 @@ class TrayManager:
                 pass
 
         # Pencere kontrolleri
-        items.append(pystray.MenuItem("Pencereyi Göster", self._show_window))
-        items.append(pystray.MenuItem("Pencereyi Gizle",  self._hide_window))
+        show_label = "Show Window" if is_en else "Pencereyi Göster"
+        hide_label = "Hide Window" if is_en else "Pencereyi Gizle"
+        quit_label = "Quit" if is_en else "Çıkış"
+
+        items.append(pystray.MenuItem(show_label, self._show_window))
+        items.append(pystray.MenuItem(hide_label, self._hide_window))
         items.append(pystray.Menu.SEPARATOR)
 
         # Uygulama çıkışı
-        items.append(pystray.MenuItem("Çıkış", self._quit))
+        items.append(pystray.MenuItem(quit_label, self._quit))
 
         return pystray.Menu(*items)
 
@@ -263,7 +276,8 @@ class TrayManager:
     def minimize_to_tray(self):
         """Pencereyi tray'e küçültür."""
         self._hide_window()
-        self.notify("Fadimrak Steam Tool", "Arka planda çalışmaya devam ediyor.")
+        msg = "Running in the background." if self._lang == "en" else "Arka planda çalışmaya devam ediyor."
+        self.notify("Fadimrak Steam Tool", msg)
 
     def is_running(self) -> bool:
         return self._running

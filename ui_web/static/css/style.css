@@ -129,6 +129,55 @@ body {
   opacity: .85;
 }
 
+.sidebar-lang-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.lang-pill {
+  flex: 1;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 900;
+  padding: 4px 6px;
+  cursor: pointer;
+  transition: all var(--tr);
+  text-align: center;
+}
+.lang-pill:hover {
+  color: var(--text);
+  border-color: var(--border-hover);
+}
+.lang-pill.active {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+}
+
+.lang-selector-group {
+  display: flex;
+  gap: 8px;
+}
+.lang-btn {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  transition: all var(--tr);
+}
+.lang-btn.active {
+  background: var(--text);
+  color: #000;
+  border-color: var(--text);
+}
+
 .sidebar-nav {
   display: flex;
   flex-direction: column;

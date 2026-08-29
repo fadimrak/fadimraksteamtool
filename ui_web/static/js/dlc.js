@@ -23,7 +23,7 @@ function _dlcReset() {
   _dlcSearchQ  = '';
 }
 
-// ── Arama Görünümü ───────────────────────────────────────────────
+// ── Search View ───────────────────────────────────────────────────
 
 function dlcShowSearch() {
   document.getElementById('dlc-search-view')?.classList.remove('hidden');
@@ -31,20 +31,20 @@ function dlcShowSearch() {
   document.getElementById('dlc-appid-input').value = _dlcAppId || '';
 }
 
-// ── Yükleme tetikleyici ───────────────────────────────────────────
+// ── Lookup trigger ────────────────────────────────────────────────
 
 async function dlcLookup() {
   const input  = document.getElementById('dlc-appid-input');
   const appId  = (input?.value || '').trim();
   if (!appId || !/^\d+$/.test(appId)) {
-    toast('warn', 'Uyarı', 'Geçerli bir App ID girin.');
+    toast('warn', t('toast.warn'), t('add.warn_invalid_appid'));
     return;
   }
   _dlcAppId = appId;
   await pywebview.api.dlc_fetch(appId);
 }
 
-// ── Detay Görünümü ───────────────────────────────────────────────
+// ── Detail View ───────────────────────────────────────────────────
 
 function _dlcShowDetail(gameName, dlcList) {
   _dlcGameName = gameName;
@@ -65,7 +65,7 @@ function dlcBackToSearch() {
   dlcShowSearch();
 }
 
-// ── İstatistik çubuğu ────────────────────────────────────────────
+// ── Stats bar ────────────────────────────────────────────────────
 
 function _dlcUpdateStats() {
   const total    = _dlcList.length;
@@ -80,7 +80,7 @@ function _dlcUpdateStats() {
   if (lockedEl)   lockedEl.textContent   = total - unlocked;
 }
 
-// ── Liste render ─────────────────────────────────────────────────
+// ── List render ─────────────────────────────────────────────────
 
 function _dlcRenderList() {
   const container = document.getElementById('dlc-list-container');
@@ -97,7 +97,7 @@ function _dlcRenderList() {
     container.innerHTML = `
       <div class="empty-state">
         <div class="empty-icon"></div>
-        <div>${q ? 'Sonuç bulunamadı.' : 'DLC bulunamadı.'}</div>
+        <div>${q ? t('dlc.no_results') : t('dlc.no_results')}</div>
       </div>`;
     return;
   }
@@ -113,9 +113,9 @@ function _dlcMakeRow(d) {
   row.dataset.id  = d.dlc_id;
 
   const badgeCls = d.unlocked ? 'dlc-badge active' : 'dlc-badge locked';
-  const badgeTxt = d.unlocked ? 'Açık' : 'Kilitli';
+  const badgeTxt = d.unlocked ? t('dlc.badge_unlocked') : t('dlc.badge_locked');
   const btnCls   = d.unlocked ? 'btn btn-danger btn-sm' : 'btn btn-primary btn-sm';
-  const btnTxt   = d.unlocked ? 'Kilitle' : 'Aç';
+  const btnTxt   = d.unlocked ? t('dlc.btn_lock') : t('dlc.btn_unlock');
 
   row.innerHTML = `
     <div class="dlc-row-info">
@@ -128,7 +128,7 @@ function _dlcMakeRow(d) {
   return row;
 }
 
-// ── Tekil toggle ─────────────────────────────────────────────────
+// ── Single toggle ─────────────────────────────────────────────────
 
 async function dlcToggleOne(dlcId, btn) {
   const entry = _dlcList.find(d => d.dlc_id === dlcId);
@@ -140,17 +140,17 @@ async function dlcToggleOne(dlcId, btn) {
     const res = await pywebview.api.dlc_lock(_dlcAppId, [dlcId]);
     if (res.ok) {
       entry.unlocked = false;
-      toast('info', 'Kilitledi', entry.name);
+      toast('info', t('dlc.toast_locked'), entry.name);
     } else {
-      toast('error', 'Hata', res.error || 'Kilitlenemedi.');
+      toast('error', t('toast.error'), res.error || t('settings.toast_save_err'));
     }
   } else {
     const res = await pywebview.api.dlc_unlock(_dlcAppId, [dlcId]);
     if (res.ok) {
       entry.unlocked = true;
-      toast('success', 'Açıldı', entry.name);
+      toast('success', t('dlc.toast_unlocked'), entry.name);
     } else {
-      toast('error', 'Hata', res.error || 'Açılamadı.');
+      toast('error', t('toast.error'), res.error || t('settings.toast_save_err'));
     }
   }
 
@@ -159,81 +159,81 @@ async function dlcToggleOne(dlcId, btn) {
   _dlcRenderList();
 }
 
-// ── Tümünü Aç ────────────────────────────────────────────────────
+// ── Unlock All ────────────────────────────────────────────────────
 
 async function dlcUnlockAll() {
   if (!_dlcAppId) return;
   const locked = _dlcList.filter(d => !d.unlocked);
   if (!locked.length) {
-    toast('info', 'Bilgi', 'Tüm DLC\'ler zaten açık.');
+    toast('info', t('toast.info'), t('dlc.toast_already_unlocked'));
     return;
   }
 
   const ok = await confirm2(
-    'Tüm DLC\'leri Aç',
-    `${_dlcGameName} oyununa ait ${locked.length} DLC açılacak.`
+    t('dlc.confirm_unlock_all_title'),
+    t('dlc.confirm_unlock_all_msg', { game: _dlcGameName, count: locked.length })
   );
   if (!ok) return;
 
   const btn = document.getElementById('dlc-unlock-all-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Açılıyor...'; }
+  if (btn) { btn.disabled = true; btn.textContent = t('dlc.unlocking_btn'); }
 
   const ids = locked.map(d => d.dlc_id);
   const res = await pywebview.api.dlc_unlock(_dlcAppId, ids);
 
-  if (btn) { btn.disabled = false; btn.textContent = 'Tümünü Aç'; }
+  if (btn) { btn.disabled = false; btn.textContent = t('dlc.btn_unlock_all'); }
 
   if (res.ok) {
     ids.forEach(id => {
       const d = _dlcList.find(d => d.dlc_id === id);
       if (d) d.unlocked = true;
     });
-    toast('success', 'Tümü Açıldı', `${res.added} DLC açıldı.`);
+    toast('success', t('dlc.toast_all_unlocked'), t('dlc.toast_all_unlocked_msg', { count: res.added }));
     _dlcUpdateStats();
     _dlcRenderList();
   } else {
-    toast('error', 'Hata', res.error || 'Açılamadı.');
+    toast('error', t('toast.error'), res.error || t('settings.toast_save_err'));
   }
 }
 
-// ── Tümünü Kilitle ───────────────────────────────────────────────
+// ── Lock All ──────────────────────────────────────────────────────
 
 async function dlcLockAll() {
   if (!_dlcAppId) return;
   const opened = _dlcList.filter(d => d.unlocked);
   if (!opened.length) {
-    toast('info', 'Bilgi', 'Açık DLC yok.');
+    toast('info', t('toast.info'), t('dlc.toast_none_unlocked'));
     return;
   }
 
   const ok = await confirm2(
-    'Tüm DLC\'leri Kilitle',
-    `${opened.length} açık DLC kilitlenecek.`
+    t('dlc.confirm_lock_all_title'),
+    t('dlc.confirm_lock_all_msg', { count: opened.length })
   );
   if (!ok) return;
 
   const btn = document.getElementById('dlc-lock-all-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Kilitleniyor...'; }
+  if (btn) { btn.disabled = true; btn.textContent = t('dlc.locking_btn'); }
 
   const ids = opened.map(d => d.dlc_id);
   const res = await pywebview.api.dlc_lock(_dlcAppId, ids);
 
-  if (btn) { btn.disabled = false; btn.textContent = 'Tümünü Kilitle'; }
+  if (btn) { btn.disabled = false; btn.textContent = t('dlc.btn_lock_all'); }
 
   if (res.ok) {
     ids.forEach(id => {
       const d = _dlcList.find(d => d.dlc_id === id);
       if (d) d.unlocked = false;
     });
-    toast('info', 'Tümü Kilitlendi', `${res.removed} DLC kilitlendi.`);
+    toast('info', t('dlc.toast_all_locked'), t('dlc.toast_all_locked_msg', { count: res.removed }));
     _dlcUpdateStats();
     _dlcRenderList();
   } else {
-    toast('error', 'Hata', res.error || 'Kilitlenemedi.');
+    toast('error', t('toast.error'), res.error || t('settings.toast_save_err'));
   }
 }
 
-// ── Filtre & Arama ───────────────────────────────────────────────
+// ── Filter & Search ───────────────────────────────────────────────
 
 function dlcSetFilter(f, btn) {
   _dlcFilter = f;
@@ -247,7 +247,7 @@ function dlcSearch(q) {
   _dlcRenderList();
 }
 
-// ── Push event işleyiciler (core.js'den çağrılır) ────────────────
+// ── Push Event Handlers ───────────────────────────────────────────
 
 function _dlcOnLoading() {
   const detail = document.getElementById('dlc-detail-view');
@@ -259,7 +259,7 @@ function _dlcOnLoading() {
     if (container) container.innerHTML = `
       <div class="empty-state">
         <div class="spin" style="width:28px;height:28px;margin-bottom:12px;"></div>
-        <div>DLC listesi yükleniyor...</div>
+        <div>${t('dlc.loading_text')}</div>
       </div>`;
   }
 }
@@ -268,7 +268,7 @@ function _dlcOnLoaded(data) {
   if (!data.dlc_list || data.dlc_list.length === 0) {
     document.getElementById('dlc-search-view')?.classList.remove('hidden');
     document.getElementById('dlc-detail-view')?.classList.add('hidden');
-    toast('info', 'DLC Bulunamadı', `${data.game_name} için kayıtlı DLC yok.`);
+    toast('info', t('toast.info'), t('dlc.toast_none_found', { game: data.game_name }));
     return;
   }
   _dlcShowDetail(data.game_name, data.dlc_list);
@@ -277,16 +277,15 @@ function _dlcOnLoaded(data) {
 function _dlcOnError(msg) {
   document.getElementById('dlc-search-view')?.classList.remove('hidden');
   document.getElementById('dlc-detail-view')?.classList.add('hidden');
-  toast('error', 'DLC Hatası', msg);
+  toast('error', t('dlc.toast_err'), msg);
 }
 
 function _dlcOnUnlockAllDone(data) {
-  // Tüm liste yeniden çekilmişse ID listesiyle güncelle
   if (data.unlocked) {
     const unlSet = new Set(data.unlocked);
     _dlcList.forEach(d => { d.unlocked = unlSet.has(d.dlc_id); });
     _dlcUpdateStats();
     _dlcRenderList();
   }
-  toast('success', 'Tümü Açıldı', `${data.added || 0} DLC açıldı.`);
+  toast('success', t('dlc.toast_all_unlocked'), t('dlc.toast_all_unlocked_msg', { count: data.added || 0 }));
 }
