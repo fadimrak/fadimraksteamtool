@@ -1,4 +1,3 @@
-<img width="1256" height="806" alt="Ekran görüntüsü 2026-08-29 141239" src="https://github.com/user-attachments/assets/eada01e2-e89e-4765-8001-96fca672b683" /><img width="1255" height="805" alt="Ekran görüntüsü 2026-08-29 141234" src="https://github.com/user-attachments/assets/a7089105-5081-4ace-9813-c438ae5c3eef" />
 <img width="1257" height="807" alt="Ekran görüntüsü 2026-08-29 141219" src="https://github.com/user-attachments/assets/db1f5d6b-6708-41b2-83bf-6321ab198208" />
 <img width="1253" height="807" alt="Ekran görüntüsü 2026-08-29 141042" src="https://github.com/user-attachments/assets/2d3e50a1-2943-4453-b370-419bba399cc3" />
 # Fadimrak Steam Tool
