@@ -1,0 +1,34 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyInstaller / Build outputs
+build/
+dist/
+output/
+build_log.txt
+*.manifest
+*.spec.bak
+
+# Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# User runtime data and local cache
+steam_owned_cache.json
+steam_appid.txt
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
