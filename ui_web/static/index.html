@@ -18,12 +18,6 @@
   <div id="splash-status" data-i18n="splash.credits">fadimrak tarafından yapılmıştır. İyi kullanımlar!</div>
 </div>
 
-<!-- ── Update Banner ───────────────────────────────────────────── -->
-<div id="update-banner" class="hidden">
-  <span data-i18n="update.banner">Yeni bir sürüm mevcut!</span>
-  <button class="btn-banner" onclick="openGithub()" data-i18n="update.download">İndir</button>
-  <button class="btn-close-banner" onclick="document.getElementById('update-banner').classList.add('hidden')">✕</button>
-</div>
 
 <!-- ── Main Layout ─────────────────────────────────────────────── -->
 <div id="layout">
@@ -32,12 +26,6 @@
   <aside id="sidebar">
     <div class="sidebar-logo">
       <img src="logo.png" alt="logo">
-    </div>
-
-    <!-- Quick Language Switcher in Sidebar -->
-    <div class="sidebar-lang-toggle">
-      <button class="lang-pill active" data-lang="tr" onclick="setLanguage('tr')">🇹🇷 TR</button>
-      <button class="lang-pill" data-lang="en" onclick="setLanguage('en')">🇬🇧 EN</button>
     </div>
 
     <nav class="sidebar-nav">
@@ -145,15 +133,13 @@
         <h3 data-i18n="add.guide_title">Oyun Ekleme Rehberi</h3>
         <p>
           <b><span data-i18n="add.tab_search">Mağazada Ara</span>:</b> <span data-i18n="add.guide_desc_search">Steam mağazasındaki tüm oyunları arayabilir ve tek tıkla Lua / Manifest dosyalarını indirebilirsiniz.</span><br>
-          <b><span data-i18n="add.tab_files">Dosya Yükle</span>:</b> <span data-i18n="add.guide_desc_files">İndirdiğiniz .lua, .manifest veya .zip dosyalarını doğrudan Steam klasörünüze aktarabilirsiniz.</span><br>
-          <b><span data-i18n="add.tab_appid">App ID ile Ekle</span>:</b> <span data-i18n="add.guide_desc_appid">SteamDB'den bulduğunuz App ID ile anında indirme başlatabilirsiniz.</span>
+          <b><span data-i18n="add.tab_files">Dosya Yükle</span>:</b> <span data-i18n="add.guide_desc_files">İndirdiğiniz .lua, .manifest veya .zip dosyalarını doğrudan Steam klasörünüze aktarabilirsiniz.</span>
         </p>
       </div>
 
       <div class="tabs-nav">
         <button class="tab-btn active" onclick="switchTab('search', this)" data-i18n="add.tab_search">Mağazada Ara</button>
         <button class="tab-btn" onclick="switchTab('files', this)" data-i18n="add.tab_files">Dosya Yükle</button>
-        <button class="tab-btn" onclick="switchTab('appid', this)" data-i18n="add.tab_appid">App ID ile Ekle</button>
       </div>
 
       <!-- Tab: Search -->
@@ -212,20 +198,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Tab: App ID -->
-      <div id="tab-appid" class="tab-pane">
-        <div class="settings-block" style="max-width:480px;">
-          <h3 data-i18n="add.appid_title">Doğrudan App ID Girişi</h3>
-          <p style="font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.6;" data-i18n="add.appid_desc">
-            SteamDB veya Steam mağazasındaki oyunun App ID'sini girerek doğrudan indirme başlatabilirsiniz.
-          </p>
-          <div style="display:flex;gap:8px;">
-            <input type="text" class="input" id="manual-appid" placeholder="Örn: 730" data-i18n-placeholder="add.appid_placeholder" style="flex:1;">
-            <button class="btn btn-primary btn-sm" onclick="addGameById(document.getElementById('manual-appid').value)" data-i18n="add.btn_download_install">İndir & Kur</button>
-          </div>
-        </div>
-      </div>
     </section>
 
     <!-- ── Page: Online Fix ────────────────────────────────────── -->
@@ -235,55 +207,98 @@
         <a class="btn btn-ghost btn-sm" href="#" onclick="pywebview.api.open_in_browser('https://online-fix.me');return false;" data-i18n="onlinefix.site_link">online-fix.me Sitesi ↗</a>
       </div>
 
-      <!-- Online Fix Detaylı Açıklama Kartı -->
+      <!-- Online Fix Kullanım Rehberi -->
       <div class="info-callout">
         <h3 data-i18n="onlinefix.guide_title">Online Fix Nedir ve Nasıl Çalışır?</h3>
         <p data-i18n="onlinefix.guide_desc">
-          Online-Fix, oyunları arkadaşlarınızla resmi veya özel sunucularda çok oyunculu (multiplayer) oynamanızı sağlayan fix paketleridir.
+          Online-Fix, oyunları arkadaşlarınızla resmi veya özel sunucularda çok oyunculu (multiplayer) oynamanızı sağlayan fix paketleridir. Başka bir web sitesine gitmeden doğrudan uygulama içinden arayabilir, tek tıkla indirebilir ve kurulu oyununuza kurabilirsiniz.
         </p>
-        <ul>
-          <li><b>1. Adım:</b> <span data-i18n="onlinefix.step1_desc">online-fix.me sitesinden indirdiğiniz fix arşivini (.rar, .zip, .7z) seçin.</span></li>
-          <li><b>2. Adım:</b> <span data-i18n="onlinefix.step2_desc">Oyunun ana kurulu olduğu klasörü (oyun .exe dosyasının bulunduğu dizin) seçin.</span></li>
-          <li><b>3. Adım:</b> <span data-i18n="onlinefix.step3_desc">"Fix'i Kur" butonuna basın. Arşiv otomatik olarak online-fix.me şifresiyle oyun klasörünüze çıkartılacaktır.</span></li>
-          <li><b>Önemli:</b> <span data-i18n="onlinefix.step_important">Kurulum bittikten sonra Steam istemciniz açık olmalı ve oyunu doğrudan ana dizindeki exe dosyasından başlatmalısınız.</span></li>
-        </ul>
       </div>
 
+      <!-- Extractor Uyarısı -->
       <div id="of-extractor-warn" class="settings-block hidden" style="border-left:3px solid var(--warn);">
         <div style="color:var(--warn);font-weight:700;margin-bottom:4px;" data-i18n="onlinefix.warn_extractor_title">WinRAR veya 7-Zip Gerekli</div>
         <div style="font-size:11px;color:var(--muted);" data-i18n="onlinefix.warn_extractor_desc">.rar arşivlerini otomatik açabilmek için sisteminizde WinRAR veya 7-Zip kurulu olmalıdır.</div>
       </div>
 
-      <div class="of-step-card">
-        <div class="of-step-header">
-          <div class="of-step-num" id="of-num1">1</div>
-          <div class="of-step-title" data-i18n="onlinefix.step1_title">Online-Fix Arşivini Seç (.rar / .zip / .7z)</div>
-        </div>
-        <button class="btn btn-ghost btn-sm" onclick="ofSelectArchive()" data-i18n="onlinefix.btn_select_archive">Arşiv Seç…</button>
-        <div id="of-archive-info" class="of-selected-info hidden">
-          <b id="of-archive-name">—</b> <span id="of-archive-ext" style="color:var(--muted);margin-left:6px;"></span>
-        </div>
+      <!-- Sekme Navigasyonu -->
+      <div class="tabs-nav">
+        <button class="tab-btn active" onclick="ofSwitchTab('search', this)" data-i18n="onlinefix.tab_search">Online Fix Ara & İndir</button>
+        <button class="tab-btn" onclick="ofSwitchTab('installed', this)" data-i18n="onlinefix.tab_installed">Yüklü Steam Oyunlarım</button>
+        <button class="tab-btn" onclick="ofSwitchTab('manual', this)" data-i18n="onlinefix.tab_manual">Manuel Arşiv Seçimi</button>
       </div>
 
-      <div class="of-step-card">
-        <div class="of-step-header">
-          <div class="of-step-num" id="of-num2">2</div>
-          <div class="of-step-title" data-i18n="onlinefix.step2_title">Hedef Oyun Klasörünü Seç (Exe'nin olduğu klasör)</div>
+      <!-- ── Sekme 1: Online Fix Ara & İndir ──────────────────────── -->
+      <div id="of-tab-search" class="tab-pane active">
+        <!-- Arama Kutusu -->
+        <div class="of-search-header" style="margin-bottom:14px;">
+          <div class="search-box" style="flex:1;max-width:420px;">
+            <span class="search-icon"></span>
+            <input type="search" class="input" id="of-search-input" style="width:100%;" placeholder="Online-Fix oyunlarında ara (Örn: Lethal Company)..." data-i18n-placeholder="onlinefix.search_placeholder" oninput="ofOnSearchInput(this.value)">
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="ofSearch(document.getElementById('of-search-input').value)" data-i18n="onlinefix.btn_search">Ara</button>
         </div>
-        <button class="btn btn-ghost btn-sm" onclick="ofSelectGameDir()" data-i18n="onlinefix.btn_select_folder">Klasör Seç…</button>
-        <div id="of-gamedir-info" class="of-selected-info hidden">
-          <span id="of-gamedir-path">—</span>
+
+        <!-- Yükleniyor Göstergesi -->
+        <div id="of-search-loader" class="empty-state hidden" style="padding:40px 0;">
+          <div class="spin" style="width:28px;height:28px;"></div>
+          <div style="font-size:12px;color:var(--muted);margin-top:10px;" data-i18n="onlinefix.search_loading">Resmi online-fix.me taranıyor…</div>
         </div>
+
+        <!-- Sonuç Yok Durumu -->
+        <div id="of-search-empty" class="empty-state hidden" style="padding:40px 0;">
+          <div class="empty-icon"></div>
+          <div style="font-size:14px;font-weight:700;margin-bottom:6px;" data-i18n="onlinefix.search_empty_title">Sonuç Bulunamadı</div>
+          <div style="font-size:12px;color:var(--muted);" data-i18n="onlinefix.search_empty_desc">Farklı bir anahtar kelimeyle veya İngilizce oyun adıyla arama yapmayı deneyin.</div>
+        </div>
+
+        <!-- Arama Sonuçları Grid'i -->
+        <div id="of-search-results" class="game-grid" style="margin-top:14px;"></div>
       </div>
 
-      <div style="margin-top:14px;">
-        <button class="btn btn-primary" id="of-install-btn" disabled onclick="ofInstall()" data-i18n="onlinefix.btn_install">Fix'i Kur</button>
+      <!-- ── Sekme 2: Yüklü Steam Oyunlarım ─────────────────────── -->
+      <div id="of-tab-installed" class="tab-pane">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-size:12px;color:var(--muted);" id="of-installed-count">Yüklü oyunlar taranıyor…</span>
+          <button class="btn btn-ghost btn-sm" onclick="ofLoadInstalledGames()" data-i18n="onlinefix.btn_refresh_installed">↺ Listeyi Yenile</button>
+        </div>
+
+        <div id="of-installed-grid" class="game-grid"></div>
       </div>
 
-      <div id="of-progress-section" class="settings-block hidden" style="margin-top:16px;">
-        <div id="of-progress-label" style="font-size:12px;margin-bottom:8px;color:var(--muted);" data-i18n="onlinefix.label_starting">Kuruluyor…</div>
-        <div style="width:100%;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;">
-          <div id="of-progress-bar" style="width:0%;height:100%;background:var(--success);transition:width .2s;"></div>
+      <!-- ── Sekme 3: Manuel Arşiv Kurulumu ──────────────────────── -->
+      <div id="of-tab-manual" class="tab-pane">
+        <div class="of-step-card">
+          <div class="of-step-header">
+            <div class="of-step-num" id="of-num1">1</div>
+            <div class="of-step-title" data-i18n="onlinefix.step1_title">Online-Fix Arşivini Seç (.rar / .zip / .7z)</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="ofSelectArchive()" data-i18n="onlinefix.btn_select_archive">Arşiv Seç…</button>
+          <div id="of-archive-info" class="of-selected-info hidden">
+            <b id="of-archive-name">—</b> <span id="of-archive-ext" style="color:var(--muted);margin-left:6px;"></span>
+          </div>
+        </div>
+
+        <div class="of-step-card">
+          <div class="of-step-header">
+            <div class="of-step-num" id="of-num2">2</div>
+            <div class="of-step-title" data-i18n="onlinefix.step2_title">Hedef Oyun Klasörünü Seç (Exe'nin olduğu klasör)</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="ofSelectGameDir()" data-i18n="onlinefix.btn_select_folder">Klasör Seç…</button>
+          <div id="of-gamedir-info" class="of-selected-info hidden">
+            <span id="of-gamedir-path">—</span>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;">
+          <button class="btn btn-primary" id="of-install-btn" disabled onclick="ofInstall()" data-i18n="onlinefix.btn_install">Fix'i Kur</button>
+        </div>
+
+        <div id="of-progress-section" class="settings-block hidden" style="margin-top:16px;">
+          <div id="of-progress-label" style="font-size:12px;margin-bottom:8px;color:var(--muted);" data-i18n="onlinefix.label_starting">Kuruluyor…</div>
+          <div style="width:100%;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;">
+            <div id="of-progress-bar" style="width:0%;height:100%;background:var(--success);transition:width .2s;"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -629,11 +644,15 @@
       <!-- Dil / Language Seçimi -->
       <div class="settings-block">
         <h3 data-i18n="settings.lang_section">Dil / Language</h3>
-        <div class="settings-row" style="display:flex;align-items:center;gap:12px;">
-          <label data-i18n="settings.lang_label">Arayüz Dili</label>
-          <div class="lang-selector-group">
-            <button class="btn btn-ghost btn-sm lang-btn active" data-lang="tr" onclick="setLanguage('tr')">🇹🇷 Türkçe</button>
-            <button class="btn btn-ghost btn-sm lang-btn" data-lang="en" onclick="setLanguage('en')">🇬🇧 English</button>
+        <div class="settings-row" style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text);" data-i18n="settings.lang_label">Arayüz Dili</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px;" data-i18n="settings.lang_desc">Uygulama arayüz dilini seçin.</div>
+          </div>
+          <div class="lang-segmented-control" id="lang-switch" data-active="tr">
+            <div class="lang-slider"></div>
+            <button type="button" class="lang-option active" data-lang="tr" onclick="setLanguage('tr')">TR</button>
+            <button type="button" class="lang-option" data-lang="en" onclick="setLanguage('en')">EN</button>
           </div>
         </div>
       </div>
@@ -666,10 +685,6 @@
         <div class="credits-row">
           <span class="credits-label" data-i18n="settings.developer_label">Developer</span>
           <a class="credits-link" href="#" onclick="pywebview.api.open_in_browser('https://fadimrak.xyz');return false;">fadimrak</a>
-        </div>
-        <div class="credits-row">
-          <span class="credits-label" data-i18n="settings.dlls_label">DLL'ler</span>
-          <span class="credits-val">toprak1224</span>
         </div>
         <div class="credits-row">
           <span class="credits-label" data-i18n="settings.web_label">Web</span>
@@ -724,6 +739,95 @@
     <div class="modal-actions">
       <button class="btn btn-ghost btn-sm" onclick="rejectLegal()" data-i18n="legal.btn_reject">Reddet & Çıkış</button>
       <button class="btn btn-primary btn-sm" id="accept-btn" disabled onclick="acceptLegal()" data-i18n="legal.btn_accept">Kabul Et</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── OnlineFix Detail & Install Modal ────────────────────────── -->
+<div id="of-detail-modal" class="modal-overlay hidden">
+  <div class="modal-box of-modal-box">
+    <div class="of-modal-header">
+      <div class="of-modal-cover-wrap">
+        <img id="of-modal-img" src="logo.png" alt="poster">
+      </div>
+      <div class="of-modal-title-wrap">
+        <div class="of-modal-badges">
+          <span class="of-badge of-badge-cat" id="of-modal-cat">Game</span>
+          <span class="of-badge of-badge-ver" id="of-modal-ver">v1.0</span>
+          <span class="of-badge of-badge-author" id="of-modal-author">0xdeadc0de</span>
+        </div>
+        <h2 id="of-modal-title" class="of-modal-title">Oyun Başlığı</h2>
+        <div class="of-modal-meta" id="of-modal-meta">Resmi online-fix.me Arşivi</div>
+      </div>
+      <button class="btn-close-banner" onclick="ofCloseModal()" style="font-size:18px;">✕</button>
+    </div>
+
+    <div class="of-modal-body">
+      <!-- Açıklama -->
+      <div class="of-modal-desc-box" id="of-modal-desc-box">
+        <p id="of-modal-desc" style="font-size:12px;color:var(--muted);line-height:1.5;"></p>
+      </div>
+
+      <!-- Hedef Oyun Klasörü Seçimi / Otomatik Eşleşme -->
+      <div class="of-modal-folder-section">
+        <label style="font-size:11px;font-weight:700;color:var(--text);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">
+          <span data-i18n="onlinefix.modal_folder_label">Hedef Oyun Klasörü (.exe'nin olduğu yer):</span>
+          <span id="of-modal-autofound" class="of-status-badge hidden" style="color:var(--success);">✓ Otomatik Tespit Edildi</span>
+        </label>
+        
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+          <input type="text" class="input" id="of-modal-folder-input" placeholder="C:\Program Files (x86)\Steam\steamapps\common\..." style="flex:1;font-size:11px;">
+          <button class="btn btn-ghost btn-sm" onclick="ofModalBrowseFolder()" data-i18n="onlinefix.btn_browse_folder">Gözat…</button>
+        </div>
+
+        <!-- Kurulu oyunlardan hızlı seç dropdown'ı -->
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:10px;color:var(--muted);" data-i18n="onlinefix.quick_select_label">Veya yüklü oyun seç:</span>
+          <select id="of-modal-installed-select" class="input of-select" onchange="ofModalOnSelectInstalled(this.value)" style="flex:1;font-size:11px;padding:3px 8px;">
+            <option value="" data-i18n="onlinefix.select_installed_game">— Bilgisayardaki Steam Oyunları —</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- İndirilecek Fix Paketi Seçimi -->
+      <div class="of-modal-download-section" id="of-modal-download-section">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-size:11px;font-weight:700;color:var(--text);" data-i18n="onlinefix.fix_source_label">İndirme Kaynağı:</span>
+          <span id="of-modal-fix-info" style="font-size:10px;color:var(--success);font-weight:700;">Resmi Fix Repair (Doğrudan API)</span>
+        </div>
+        <select id="of-modal-fix-select" class="input of-select" style="width:100%;font-size:11px;padding:5px 8px;">
+          <option value="">Fix taranıyor…</option>
+        </select>
+      </div>
+
+      <!-- İlerleme ve Durum Çubuğu -->
+      <div id="of-modal-progress-wrap" class="of-modal-progress-wrap hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span id="of-modal-status-text" style="font-size:12px;font-weight:700;color:var(--text);">İndiriliyor…</span>
+          <div style="font-size:11px;color:var(--muted);display:flex;gap:8px;">
+            <span id="of-modal-speed">0 MB/s</span>
+            <span id="of-modal-pct" style="font-weight:700;color:var(--success);">0%</span>
+          </div>
+        </div>
+        <div class="of-progress-track">
+          <div id="of-modal-progress-bar" class="of-progress-fill" style="width:0%;"></div>
+        </div>
+      </div>
+
+      <!-- Başarı Durumu / Aksiyonlar -->
+      <div id="of-modal-success-box" class="settings-block hidden" style="border-left:3px solid var(--success);margin-top:12px;background:color-mix(in srgb, var(--success) 8%, var(--bg2));">
+        <div style="color:var(--success);font-weight:700;font-size:13px;margin-bottom:4px;" data-i18n="onlinefix.success_title">Fix Başarıyla Kuruldu!</div>
+        <div style="font-size:11px;color:var(--text);margin-bottom:10px;" data-i18n="onlinefix.success_desc">Oyun klasörünüz güncellendi. Steam'inizin açık olduğundan emin olun ve oyunu başlatın.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" id="of-modal-launch-btn" onclick="ofModalLaunchGame()" data-i18n="onlinefix.btn_launch_game">▶ Oyunu Başlat</button>
+          <button class="btn btn-danger btn-sm" id="of-modal-uninstall-btn" onclick="ofModalUninstall()" data-i18n="onlinefix.btn_uninstall_fix">✕ Fix'i Kaldır (Geri Al)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-actions" style="margin-top:16px;">
+      <button class="btn btn-ghost btn-sm" onclick="ofCloseModal()" data-i18n="modal.close">Kapat</button>
+      <button class="btn btn-primary btn-sm" id="of-modal-install-btn" onclick="ofModalStartDownloadAndInstall()" data-i18n="onlinefix.btn_start_install">⬇ Tek Tıkla İndir & Kur</button>
     </div>
   </div>
 </div>

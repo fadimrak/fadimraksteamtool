@@ -16,8 +16,19 @@ async function samInit() {
     _samInited = true;
   }
 
-  // If not logged in, show login wall
-  if (!_accountLoggedIn) {
+  // Hesap durumunu doğrula
+  let loggedIn = _accountLoggedIn;
+  if (!loggedIn) {
+    try {
+      const acc = await pywebview.api.account_get_status();
+      if (acc && acc.logged_in) {
+        _accountSetLoggedIn(acc.steam_id, acc.name, acc.avatar);
+        loggedIn = true;
+      }
+    } catch (e) {}
+  }
+
+  if (!loggedIn) {
     _samShowLoginWall();
     return;
   }

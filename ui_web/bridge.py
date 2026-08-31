@@ -544,7 +544,7 @@ class API:
         if not steam_path or not os.path.exists(steam_path):
             return {"installed": False, "msg": "Steam Yok"}
         d1 = os.path.join(steam_path, "dwmapi.dll")
-        d2 = os.path.join(steam_path, "toprakcracker.dll")
+        d2 = os.path.join(steam_path, "fadimrak.dll")
         if os.path.exists(d1) and os.path.exists(d2):
             return {"installed": True, "msg": "DLL Aktif"}
         return {"installed": False, "msg": "DLL Eksik"}
@@ -576,6 +576,156 @@ class API:
             return {"path": result[0]}
         return {"path": ""}
 
+    def of_search_games(self, query):
+        threading.Thread(
+            target=self._of_search_thread,
+            args=(query,),
+            daemon=True,
+        ).start()
+        return {"ok": True}
+
+    def _of_search_thread(self, query):
+        from core.onlinefix import search_onlinefix
+        try:
+            self._push("of_search_loading", {"query": query})
+            result = search_onlinefix(query)
+            if result.get("ok"):
+                self._push("of_search_loaded", {
+                    "query": query,
+                    "results": result.get("results", []),
+                    "count": result.get("count", 0),
+                })
+            else:
+                self._push("of_search_error", {
+                    "query": query,
+                    "error": result.get("error", "Arama başarısız oldu."),
+                })
+        except Exception as e:
+            self._push("of_search_error", {"query": query, "error": str(e)})
+
+    def of_get_details(self, article_url):
+        threading.Thread(
+            target=self._of_details_thread,
+            args=(article_url,),
+            daemon=True,
+        ).start()
+        return {"ok": True}
+
+    def _of_details_thread(self, article_url):
+        from core.onlinefix import get_onlinefix_details
+        try:
+            self._push("of_details_loading", {"url": article_url})
+            result = get_onlinefix_details(article_url)
+            if result.get("ok"):
+                self._push("of_details_loaded", result)
+            else:
+                self._push("of_details_error", {
+                    "url": article_url,
+                    "error": result.get("error", "Detaylar alınamadı."),
+                })
+        except Exception as e:
+            self._push("of_details_error", {"url": article_url, "error": str(e)})
+
+    def of_get_installed_steam_games(self):
+        from core.onlinefix import get_installed_steam_games
+        try:
+            sp = self._steam_path()
+            games = get_installed_steam_games(sp)
+            return {"ok": True, "games": games}
+        except Exception as e:
+            return {"ok": False, "error": str(e), "games": []}
+
+    def of_auto_match_dir(self, game_name, app_id=None):
+        from core.onlinefix import auto_match_game_dir
+        try:
+            sp = self._steam_path()
+            matched = auto_match_game_dir(game_name, app_id, sp)
+            return {"ok": True, "path": matched or ""}
+        except Exception as e:
+            return {"ok": False, "error": str(e), "path": ""}
+
+    def of_start_download_and_install(self, download_url, game_dir, backup=True):
+        if not download_url or not game_dir:
+            return {"ok": False, "error": "İndirme linki veya oyun klasörü belirtilmedi."}
+        threading.Thread(
+            target=self._of_download_install_thread,
+            args=(download_url, game_dir, backup),
+            daemon=True,
+        ).start()
+        return {"ok": True}
+
+    def _of_download_install_thread(self, download_url, game_dir, backup):
+        from core.onlinefix import download_fix_archive, install_fix
+        try:
+            # 1. Aşama: İndirme
+            self._push("of_task_status", {
+                "step": "downloading",
+                "msg": "Fix arşivi resmi sunucudan indiriliyor...",
+            })
+
+            def on_dl_progress(d):
+                self._push("of_download_progress", d)
+
+            dl_res = download_fix_archive(download_url, progress_cb=on_dl_progress)
+            if not dl_res.get("ok"):
+                self._push("of_task_error", {"error": f"İndirme başarısız: {dl_res.get('error')}"})
+                return
+
+            archive_path = dl_res["file_path"]
+
+            # 2. Aşama: Kurulum / Arşiv Çıkarma
+            self._push("of_task_status", {
+                "step": "installing",
+                "msg": "Arşiv şifresiyle oyun klasörüne çıkartılıyor...",
+            })
+
+            def on_inst_progress(pct):
+                self._push("of_install_progress", {"pct": pct})
+
+            inst_res = install_fix(archive_path, game_dir, backup=backup, progress_cb=on_inst_progress)
+
+            # Geçici dosyayı temizle
+            if os.path.exists(archive_path):
+                try:
+                    os.remove(archive_path)
+                except Exception:
+                    pass
+
+            if inst_res.get("ok"):
+                self._push("of_task_done", {
+                    "game_dir": game_dir,
+                    "archive": dl_res.get("filename", ""),
+                    "method": inst_res.get("method", ""),
+                    "backup_count": inst_res.get("backup_count", 0),
+                })
+            else:
+                self._push("of_task_error", {"error": f"Kurulum başarısız: {inst_res.get('error')}"})
+
+        except Exception as e:
+            self._push("of_task_error", {"error": str(e)})
+
+    def of_uninstall_fix(self, game_dir):
+        from core.onlinefix import uninstall_fix
+        try:
+            return uninstall_fix(game_dir)
+        except Exception as e:
+            return {"ok": False, "error": str(e)}
+
+    def of_launch_game(self, game_dir):
+        from core.onlinefix import launch_game_executable
+        try:
+            return launch_game_executable(game_dir)
+        except Exception as e:
+            return {"ok": False, "error": str(e)}
+
+    def of_install_spacewar(self):
+        try:
+            import webbrowser
+            webbrowser.open("steam://install/480")
+            return {"ok": True}
+        except Exception as e:
+            return {"ok": False, "error": str(e)}
+
     def install_online_fix(self, archive_path, game_dir):
         if not archive_path or not game_dir:
             return {"ok": False, "error": "Arşiv veya oyun klasörü belirtilmedi."}
@@ -592,7 +742,7 @@ class API:
             self._push("fix_progress", {"pct": pct})
         try:
             self._push("fix_progress", {"pct": 0})
-            result = install_fix(archive_path, game_dir, progress_cb=on_progress)
+            result = install_fix(archive_path, game_dir, backup=True, progress_cb=on_progress)
             if result["ok"]:
                 self._push("fix_done", {
                     "method":   result.get("method", ""),

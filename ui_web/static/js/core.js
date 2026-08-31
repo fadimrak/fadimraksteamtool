@@ -96,13 +96,36 @@ async function boot() {
   fill.style.width = '100%';
   checkDllStatus();
   settingsInit(); // Tray butonlarını boot'ta kontrol et
+  accountInit();  // Steam hesap durumunu açılışta yükle
 
   await sleep(400);
   splash.classList.add('hidden');
 }
 
 // ── Navigation ─────────────────────────────────────────────────────
-function navigateTo(page) {
+async function navigateTo(page) {
+  if (page === 'idle' || page === 'sam') {
+    let loggedIn = _accountLoggedIn;
+    if (!loggedIn) {
+      try {
+        const acc = await pywebview.api.account_get_status();
+        if (acc && acc.logged_in) {
+          _accountSetLoggedIn(acc.steam_id, acc.name, acc.avatar);
+          loggedIn = true;
+        }
+      } catch (e) {}
+    }
+
+    if (!loggedIn) {
+      const isSam = page === 'sam';
+      const title = isSam ? (t('sam.login_required_title') || 'Steam Hesabı Gerekli') : (t('idle.login_required_title') || 'Steam Hesabı Gerekli');
+      const desc = isSam ? (t('sam.login_required_desc') || 'Başarım yöneticisini kullanmak için Hesap sekmesinden Steam hesabınızı bağlamanız gerekiyor.') : (t('idle.login_required_desc') || 'Kart ve saat kasmak için Hesap sekmesinden Steam hesabınızı bağlamanız gerekiyor.');
+      toast('warn', title, desc);
+      navigateTo('account');
+      return;
+    }
+  }
+
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + page)?.classList.add('active');
@@ -150,7 +173,94 @@ window.onPythonEvent = function({ event, data }) {
       break;
     }
 
-    // Fix events
+    // Fix events (Manuel & In-App)
+    case 'of_search_loaded': {
+      if (typeof ofRenderSearchResults === 'function') {
+        ofRenderSearchResults(data.results, data.query);
+      }
+      break;
+    }
+    case 'of_search_error': {
+      const loader = document.getElementById('of-search-loader');
+      const empty  = document.getElementById('of-search-empty');
+      if (loader) loader.classList.add('hidden');
+      if (empty)  empty.classList.remove('hidden');
+      toast('error', t('toast.error'), data.error || 'Arama yapılamadı.');
+      break;
+    }
+    case 'of_details_loaded': {
+      if (typeof ofRenderDetailData === 'function') {
+        ofRenderDetailData(data);
+      }
+      break;
+    }
+    case 'of_details_error': {
+      toast('error', t('toast.error'), data.error || 'Detaylar yüklenemedi.');
+      break;
+    }
+    case 'of_task_status': {
+      const stEl = document.getElementById('of-modal-status-text');
+      if (stEl) stEl.textContent = data.msg || 'İşleniyor…';
+      break;
+    }
+    case 'of_download_progress': {
+      const bar   = document.getElementById('of-modal-progress-bar');
+      const pctEl = document.getElementById('of-modal-pct');
+      const spdEl = document.getElementById('of-modal-speed');
+      const stEl  = document.getElementById('of-modal-status-text');
+
+      const pct = data.pct || 0;
+      if (bar)   bar.style.width = pct + '%';
+      if (pctEl) pctEl.textContent = pct + '%';
+      if (spdEl && data.speed_mb !== undefined) {
+        spdEl.textContent = `${data.downloaded_mb || 0} / ${data.total_mb || '?'} MB (${data.speed_mb} MB/s)`;
+      }
+      if (stEl) {
+        stEl.textContent = pct < 100 ? t('onlinefix.status_downloading') : t('onlinefix.status_extracting');
+      }
+      break;
+    }
+    case 'of_install_progress': {
+      const bar   = document.getElementById('of-modal-progress-bar');
+      const pctEl = document.getElementById('of-modal-pct');
+      const stEl  = document.getElementById('of-modal-status-text');
+      const pct   = data.pct || 0;
+      if (bar)   bar.style.width = '100%';
+      if (pctEl) pctEl.textContent = '100%';
+      if (stEl)  stEl.textContent = t('onlinefix.status_extracting');
+      break;
+    }
+    case 'of_task_done': {
+      const progressWrap = document.getElementById('of-modal-progress-wrap');
+      const successBox   = document.getElementById('of-modal-success-box');
+      const installBtn   = document.getElementById('of-modal-install-btn');
+
+      if (progressWrap) progressWrap.classList.add('hidden');
+      if (successBox)   successBox.classList.remove('hidden');
+      if (installBtn) {
+        installBtn.disabled = true;
+        installBtn.textContent = t('onlinefix.btn_done');
+      }
+      toast('success', t('onlinefix.toast_done'), `${data.archive} → ${data.game_dir}`);
+      break;
+    }
+    case 'of_task_error': {
+      const progressWrap = document.getElementById('of-modal-progress-wrap');
+      const installBtn   = document.getElementById('of-modal-install-btn');
+      const stEl         = document.getElementById('of-modal-status-text');
+
+      if (stEl) {
+        stEl.textContent = `${t('toast.error')}: ${data.error}`;
+        stEl.style.color = 'var(--danger)';
+      }
+      if (installBtn) {
+        installBtn.disabled = false;
+        installBtn.textContent = t('onlinefix.btn_start_install');
+      }
+      toast('error', t('onlinefix.toast_err'), data.error);
+      break;
+    }
+
     case 'fix_progress': {
       const bar   = document.getElementById('of-progress-bar');
       const label = document.getElementById('of-progress-label');

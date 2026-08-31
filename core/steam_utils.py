@@ -2,7 +2,7 @@ import os
 import subprocess
 import sys
 import time
-import urllib.request
+import shutil
 import requests
 
 # winreg kütüphanesini sadece Windows'taysak içe aktar
@@ -11,11 +11,21 @@ if sys.platform == "win32":
 else:
     winreg = None
 
-# DLL dosyalarının indirileceği URL'ler
-HID_DLL_URLS = [
-    ("https://raw.githubusercontent.com/toprak1224/hid.dll/main/dwmapi.dll", "dwmapi.dll"),
-    ("https://raw.githubusercontent.com/toprak1224/hid.dll/main/toprakcracker.dll", "toprakcracker.dll"),
+# DLL dosyalarının indirme bağlantıları (fadimrak resmi repo)
+DLL_DOWNLOAD_URLS = [
+    ("https://github.com/fadimrak/dlls/raw/refs/heads/main/dwmapi.dll", "dwmapi.dll"),
+    ("https://github.com/fadimrak/dlls/raw/refs/heads/main/fadimrak.dll", "fadimrak.dll"),
 ]
+DLL_FILES = ["dwmapi.dll", "fadimrak.dll"]
+LEGACY_DLL_FILES = ["xinput1_4.dll"]
+
+def _get_dll_build_dir():
+    """Derlenmiş DLL'lerin bulunduğu yerel build dizinini döndürür."""
+    if getattr(sys, '_MEIPASS', None):
+        return sys._MEIPASS
+    here = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(here)
+    return os.path.join(project_root, "steamapishowcase", "build")
 
 def detect_steam_path():
     """Steam kurulum yolunu döndürür, bulunamazsa None."""
@@ -69,7 +79,7 @@ def restart_steam(steam_path):
         subprocess.Popen(['steam'])
 
 def remove_hid_dll():
-    """HID DLL dosyalarını Steam klasöründen kaldırır. Kaldırılan dosya listesini döndürür."""
+    """DLL dosyalarını Steam klasöründen kaldırır. Kaldırılan dosya listesini döndürür."""
     steam_path = detect_steam_path()
     if not steam_path:
         return []
@@ -82,19 +92,53 @@ def remove_hid_dll():
     time.sleep(2)
 
     removed = []
-    for dll_name in ["dwmapi.dll", "toprakcracker.dll"]:
+    for dll_name in DLL_FILES + LEGACY_DLL_FILES:
         dll_path = os.path.join(steam_path, dll_name)
         if os.path.exists(dll_path):
-            os.remove(dll_path)
-            removed.append(dll_name)
+            try:
+                os.remove(dll_path)
+                removed.append(dll_name)
+            except Exception:
+                pass
     return removed
 
 def download_hid_dll(steam_path):
-    """HID DLL dosyalarını steam_path'e indirir. Kaydedilen yolu döndürür."""
-    for url, filename in HID_DLL_URLS:
-        if not url:
-            raise ValueError(f"{filename} için indirme URL'si yapılandırılmamış.")
-        urllib.request.urlretrieve(url, os.path.join(steam_path, filename))
+    """DLL dosyalarını fadimrak resmi GitHub reposundan steam_path'e indirir (yerel fallback ile)."""
+    # Steam çalışıyorsa DLL kilitli olabilir, kapatmayı dene
+    if sys.platform == "win32":
+        subprocess.run(['taskkill', '/F', '/IM', 'steam.exe'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        time.sleep(1)
+
+    # Eski DLL'leri temizle (varsa)
+    for legacy in LEGACY_DLL_FILES:
+        legacy_path = os.path.join(steam_path, legacy)
+        if os.path.exists(legacy_path):
+            try:
+                os.remove(legacy_path)
+            except Exception:
+                pass
+
+    for url, filename in DLL_DOWNLOAD_URLS:
+        dst = os.path.join(steam_path, filename)
+        downloaded = False
+        try:
+            resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=15)
+            if resp.status_code == 200 and len(resp.content) > 1000:
+                with open(dst, "wb") as f:
+                    f.write(resp.content)
+                downloaded = True
+        except Exception:
+            downloaded = False
+
+        # İnternet/bağlantı hatası durumunda yerel build'den kopyala (fallback)
+        if not downloaded:
+            build_dir = _get_dll_build_dir()
+            src = os.path.join(build_dir, filename)
+            if os.path.exists(src):
+                shutil.copy2(src, dst)
+            else:
+                raise RuntimeError(f"{filename} indirilemedi ve yerel yedek bulunamadı.")
+
     return steam_path
 
 def get_dlc_ids(app_id):

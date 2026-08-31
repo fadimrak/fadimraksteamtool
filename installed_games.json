@@ -1,1 +1,38 @@
-﻿[]
+{
+    "4935510": {
+        "name": "Cellar Keeper"
+    },
+    "4992070": {
+        "name": "Sort Them Ducks"
+    },
+    "4927490": {
+        "name": "Cleaning Up The Puzzle Gallery"
+    },
+    "236430": {
+        "name": "DARK SOULS™ II",
+        "lua_files": [
+            "236430.lua"
+        ],
+        "manifest_files": [
+            "236430_key.vdf"
+        ]
+    },
+    "374320": {
+        "name": "DARK SOULS™ III",
+        "lua_files": [
+            "374320.lua"
+        ],
+        "manifest_files": [
+            "374320_key.vdf"
+        ]
+    },
+    "1687950": {
+        "name": "Persona 5 Royal",
+        "lua_files": [
+            "1687950.lua"
+        ],
+        "manifest_files": [
+            "1687950_key.vdf"
+        ]
+    }
+}

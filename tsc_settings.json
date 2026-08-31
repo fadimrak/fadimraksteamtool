@@ -1,1 +1,7 @@
-﻿{"steam_path":"","lang":"tr","has_accepted_legal":false,"steam_api_key":"","steam_id":"","license_key":""}
+{
+  "steam_path": "C:\\Program Files (x86)\\Steam",
+  "lang": "tr",
+  "has_accepted_legal": false,
+  "steam_api_key": "",
+  "steam_id": ""
+}

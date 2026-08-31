@@ -12,7 +12,24 @@ async function idleInit() {
     _idleInited = true;
   }
 
-  // Load actively idling games first
+  // 1. Hesap durumunu doğrula
+  let loggedIn = _accountLoggedIn;
+  if (!loggedIn) {
+    try {
+      const acc = await pywebview.api.account_get_status();
+      if (acc && acc.logged_in) {
+        _accountSetLoggedIn(acc.steam_id, acc.name, acc.avatar);
+        loggedIn = true;
+      }
+    } catch (e) {}
+  }
+
+  if (!loggedIn) {
+    _idleShowLoginWall();
+    return;
+  }
+
+  // 2. Aktif kasılan oyunları yükle
   try {
     const st = await pywebview.api.idle_get_status();
     if (st && st.running && st.running.length) {
@@ -30,17 +47,11 @@ async function idleInit() {
     const res = await pywebview.api.idle_get_game_list();
     if (res && res.ok && res.games && res.games.length > 0) {
       _idleLoadGames(res.games || []);
-    } else if (_accountLoggedIn) {
-      _idleLoadGames([]);
     } else {
-      _idleShowLoginWall();
+      _idleLoadGames([]);
     }
   } catch (e) {
-    if (!_accountLoggedIn) {
-      _idleShowLoginWall();
-    } else {
-      _idleLoadGames([]);
-    }
+    _idleLoadGames([]);
   }
 }
 
@@ -48,7 +59,7 @@ function _idleShowLoginWall() {
   document.getElementById('idle-login-wall')?.classList.remove('hidden');
   document.getElementById('idle-loading')?.classList.add('hidden');
   const main = document.getElementById('idle-main');
-  if (main) main.classList.remove('hidden');
+  if (main) main.classList.add('hidden');
 }
 
 function _idleShowLoading() {
